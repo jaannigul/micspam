@@ -127,7 +127,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="audioplayer.c" />
+    <ClCompile Include="audioPlayer.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="changeAudioDevice.ps1" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

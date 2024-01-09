@@ -1,5 +1,6 @@
-﻿  audioplayer.c
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\audioplayer.c(62,9): warning C4013: 'memset' undefined; assuming extern returning int
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\audioplayer.c(68,50): warning C4244: 'function': conversion from 'sf_count_t' to 'unsigned long', possible loss of data
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\audioplayer.c(75,44): warning C4244: 'function': conversion from 'sf_count_t' to 'unsigned long', possible loss of data
+﻿  audioPlayer.c
+C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\audioPlayer.c(23,2): warning C4013: 'memset' undefined; assuming extern returning int
+C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\audioPlayer.c(66,34): warning C4244: 'function': conversion from 'sf_count_t' to 'unsigned long', possible loss of data
+C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\audioPlayer.c(101,108): warning C4047: 'function': 'const size_t' differs in levels of indirection from 'char [82]'
+C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\audioPlayer.c(101,21): warning C4024: 'sprintf_s': different types for formal and actual parameter 2
   micspammer.vcxproj -> C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\micspammer.exe

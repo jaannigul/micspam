@@ -9,3 +9,4 @@ C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\FLAC.dll
 C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\opus.dll
 C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\mpg123.dll
 C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\libmp3lame.DLL
+C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\pthreadVC3d.dll
