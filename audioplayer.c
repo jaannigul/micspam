@@ -95,23 +95,23 @@ void listDevices() {
 
 //Function for switching the audio input device
 
-void switchAudioInputDevice(const char* targetDevice) {
+void switchAudioInputDevice() {
 	char command[1024];
 	printf("Switching audio input device\n");
-	sprintf_s(command, "powershell -ExecutionPolicy Bypass -File \"changeAudioDevice.ps1\" -DeviceName \"%s\"", targetDevice);
+	sprintf_s(command, sizeof(command), "powershell -ExecutionPolicy Bypass -File \"toggleDevice.ps1\"");
 	printf("Executing command: %s\n", command);
 	system(command);
 }
 
 void startPlayingAudio() {
 	Pa_Initialize();
-	listDevices();
+	//listDevices();
 	//playAudio("C:\\Users\\PC\\Desktop\\prog\\slam\\csgo\\villager.wav");
 	const char* filename = "C:\\Users\\PC\\Desktop\\prog\\slam\\csgo\\Yuno Miles - Hong Kong (Official Video) (Prod.Vinxia).wav";
 	int deviceIndexHeadphones = 4;
 	int deviceIndexVAC = 5;
 	float headphoneVolume = 0.05f;
-	float vacVolume = 0.001f;
+	float vacVolume = 0.1f;
 	pthread_t thread1, thread2;
 	PlayThreadInfo* info1 = malloc(sizeof(PlayThreadInfo));
 	PlayThreadInfo* info2 = malloc(sizeof(PlayThreadInfo));
@@ -133,9 +133,8 @@ void startPlayingAudio() {
 
 int main() {
 	
-	switchAudioInputDevice("micspam");
-	printf("aaa\n");
+	switchAudioInputDevice();
 	startPlayingAudio();
-	switchAudioInputDevice("Microphone");
+	switchAudioInputDevice();
 	return 0;
 }

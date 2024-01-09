@@ -130,7 +130,7 @@
     <ClCompile Include="audioPlayer.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="changeAudioDevice.ps1" />
+    <None Include="toggleDevice.ps1" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
