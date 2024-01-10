@@ -6,32 +6,11 @@
 #include <rtaudio/rtaudio_c.h>
 #include <Windows.h>
 
-#define BUFFER_FRAMES 256
+#include "audioswitcher.h"
+#include "globals.h"
 
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
-
-int realMicAndHeadphonesCallback(void* out, void* in, unsigned int nFrames,
-    double stream_time, rtaudio_stream_status_t status,
-    void* userdata) {
-
-    if (out)
-        printf("a\n");
-
-    if (in)
-        printf("b\n");
-
-    return 0;
-}
-
-int virtualMicCallback(void* out, void* in, unsigned int nFrames,
-    double stream_time, rtaudio_stream_status_t status,
-    void* userdata) {
-
-    printf("c\n");
-
-    return 0;
-}
 
 void listDevices() {
     int devices = rtaudio_device_count(realDeviceAudio);
@@ -60,12 +39,12 @@ _Bool selectMicAndAudioDevices() {
     rtaudio_device_info_t realMicInfo = rtaudio_get_device_info(realDeviceAudio, micId);
     rtaudio_stream_parameters_t realMicParams = { 0 };
     realMicParams.device_id = micId;
-    realMicParams.num_channels = realMicInfo.input_channels;
+    realMicParams.num_channels = 1; // hardcoded to only one channel
 
     rtaudio_device_info_t virtualMicInfo = rtaudio_get_device_info(virtualDeviceAudio, virtualMicId);
     rtaudio_stream_parameters_t virtualMicParams = { 0 };
     virtualMicParams.device_id = virtualMicId;
-    virtualMicParams.num_channels = virtualMicInfo.input_channels;
+    virtualMicParams.num_channels = 1;
 
     rtaudio_device_info_t headphonesInfo = rtaudio_get_device_info(realDeviceAudio, headphonesId);
     rtaudio_stream_parameters_t headphoneParams = { 0 };
@@ -105,15 +84,7 @@ int main() {
 
     if (!selectMicAndAudioDevices()) return 1;
 
-    rtaudio_start_stream(realDeviceAudio);
-    rtaudio_start_stream(virtualDeviceAudio);
-
-    while (1) {
-        Sleep(1);
-    }
-
-    rtaudio_close_stream(realDeviceAudio);
-    rtaudio_close_stream(virtualDeviceAudio);
+    startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
 
     return 0;
 }

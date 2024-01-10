@@ -18,5 +18,16 @@
     <ClCompile Include="audioplayer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="audioswitcher.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="audioswitcher.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="globals.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
