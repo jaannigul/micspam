@@ -1,10 +1,7 @@
 ﻿  audioplayer.c
-C:\Users\madis\source\repos\micspam\audioplayer.c(62,143): warning C4047: 'function': 'unsigned int *' differs in levels of indirection from 'int'
-C:\Users\madis\source\repos\micspam\audioplayer.c(62,130): warning C4024: 'rtaudio_open_stream': different types for formal and actual parameter 6
-C:\Users\madis\source\repos\micspam\audioplayer.c(73,145): warning C4047: 'function': 'unsigned int *' differs in levels of indirection from 'int'
-C:\Users\madis\source\repos\micspam\audioplayer.c(73,132): warning C4024: 'rtaudio_open_stream': different types for formal and actual parameter 6
-C:\Users\madis\source\repos\micspam\audioplayer.c(84,144): warning C4047: 'function': 'unsigned int *' differs in levels of indirection from 'int'
-C:\Users\madis\source\repos\micspam\audioplayer.c(84,131): warning C4024: 'rtaudio_open_stream': different types for formal and actual parameter 6
-C:\Users\madis\source\repos\micspam\audioplayer.c(31): warning C4716: 'headphoneAudioCallback': must return a value
-C:\Users\madis\source\repos\micspam\audioplayer.c(89): warning C4715: 'selectMicAndAudioDevices': not all control paths return a value
+C:\Users\madis\source\repos\micspam\audioplayer.c(78,16): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int'
+C:\Users\madis\source\repos\micspam\audioplayer.c(78,91): warning C4474: 'printf' : too many arguments passed for format string
+C:\Users\madis\source\repos\micspam\audioplayer.c(78,91): message : placeholders and their parameters expect 1 variadic arguments, but 2 were provided
   micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
