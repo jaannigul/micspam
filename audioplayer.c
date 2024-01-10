@@ -58,7 +58,7 @@ _Bool selectMicAndAudioDevices() {
         return FALSE;
     }
 
-    err = rtaudio_open_stream(virtualDeviceAudio, NULL, &virtualMicParams, RTAUDIO_FORMAT_SINT16, virtualMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
+    err = rtaudio_open_stream(virtualDeviceAudio, &virtualMicParams, NULL, RTAUDIO_FORMAT_SINT16, virtualMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
     if (err > RTAUDIO_ERROR_DEBUG_WARNING) {
         printf("Failed to open virtual microphone device with id %d due to error: %s\n", virtualMicId, rtaudio_error(virtualDeviceAudio));
         return TRUE;

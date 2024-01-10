@@ -25,10 +25,8 @@ int virtualMicCallback(void* out, void* in, unsigned int nFrames,
     void* userdata) {
 
     if (shouldForwardMicData) {
-
-        DWORD res = WaitForSingleObject(virtualMicDataMutex, 20);
-        if (res == WAIT_OBJECT_0)
-            memcpy(in, virtualMicBuf, BUFFER_FRAMES);
+        if (WaitForSingleObject(virtualMicDataMutex, 20) == WAIT_OBJECT_0)
+            memcpy(out, virtualMicBuf, BUFFER_FRAMES);
         ReleaseMutex(virtualMicDataMutex);
     }
 
