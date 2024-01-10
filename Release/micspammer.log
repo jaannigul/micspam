@@ -1,16 +1,1 @@
-﻿  audioplayer.c
-C:\Users\madis\source\repos\micspam\audioplayer.c(86,40): warning C4244: 'function': conversion from 'sf_count_t' to 'unsigned long', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(134,118): warning C4113: 'void (__cdecl *)(PlayThreadInfo *)' differs in parameter lists from 'PaStreamCallback (__cdecl *)'
-C:\Users\madis\source\repos\micspam\audioplayer.c(134,118): warning C4133: 'function': incompatible types - from 'void (__cdecl *)(PlayThreadInfo *)' to 'PaStreamCallback (__cdecl *)'
-C:\Users\madis\source\repos\micspam\audioplayer.c(127,19): warning C4090: 'initializing': different 'const' qualifiers
-C:\Users\madis\source\repos\micspam\audioplayer.c(140,19): warning C4090: 'initializing': different 'const' qualifiers
-C:\Users\madis\source\repos\micspam\audioplayer.c(168,65): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(169,58): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(172,62): warning C4047: 'function': 'void *(__cdecl *)(void *)' differs in levels of indirection from 'void (__cdecl *)(PlayThreadInfo *)'
-C:\Users\madis\source\repos\micspam\audioplayer.c(172,36): warning C4022: 'pthread_create': pointer mismatch for actual parameter 3
-  Generating code
-  3 of 9 functions (33.3%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Release\micspammer.exe
+﻿  micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Release\micspammer.exe

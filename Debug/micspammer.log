@@ -1,1 +1,11 @@
-﻿  micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
+﻿  audioplayer.c
+C:\Users\madis\source\repos\micspam\audioplayer.c(62,143): warning C4047: 'function': 'unsigned int *' differs in levels of indirection from 'int'
+C:\Users\madis\source\repos\micspam\audioplayer.c(62,130): warning C4024: 'rtaudio_open_stream': different types for formal and actual parameter 6
+C:\Users\madis\source\repos\micspam\audioplayer.c(73,9): error C2374: 'err': redefinition; multiple initialization
+C:\Users\madis\source\repos\micspam\audioplayer.c(62,9): message : see declaration of 'err'
+C:\Users\madis\source\repos\micspam\audioplayer.c(73,149): warning C4047: 'function': 'unsigned int *' differs in levels of indirection from 'int'
+C:\Users\madis\source\repos\micspam\audioplayer.c(73,136): warning C4024: 'rtaudio_open_stream': different types for formal and actual parameter 6
+C:\Users\madis\source\repos\micspam\audioplayer.c(84,9): error C2374: 'err': redefinition; multiple initialization
+C:\Users\madis\source\repos\micspam\audioplayer.c(62,9): message : see declaration of 'err'
+C:\Users\madis\source\repos\micspam\audioplayer.c(84,148): warning C4047: 'function': 'unsigned int *' differs in levels of indirection from 'int'
+C:\Users\madis\source\repos\micspam\audioplayer.c(84,135): warning C4024: 'rtaudio_open_stream': different types for formal and actual parameter 6
