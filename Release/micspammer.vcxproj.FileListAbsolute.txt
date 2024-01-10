@@ -1,1 +1,3 @@
 C:\Users\madis\source\repos\micspam\Release\micspammer.exe
+C:\Users\madis\source\repos\micspam\Release\micspammer.vcxproj.CopyComplete
+C:\Users\madis\source\repos\micspam\Release\rtaudiod.dll

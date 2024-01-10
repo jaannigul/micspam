@@ -1,7 +1,1 @@
-﻿  audioplayer.c
-C:\Users\madis\source\repos\micspam\audioplayer.c(78,16): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'int'
-C:\Users\madis\source\repos\micspam\audioplayer.c(78,91): warning C4474: 'printf' : too many arguments passed for format string
-C:\Users\madis\source\repos\micspam\audioplayer.c(78,91): message : placeholders and their parameters expect 1 variadic arguments, but 2 were provided
-  micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
-  'pwsh.exe' is not recognized as an internal or external command,
-  operable program or batch file.
+﻿  micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Debug\micspammer.exe

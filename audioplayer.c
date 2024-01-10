@@ -28,8 +28,7 @@ int virtualMicCallback(void* out, void* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
     void* userdata) {
 
-    if(out)
-        printf("c\n");
+    printf("c\n");
 
     return 0;
 }
@@ -66,7 +65,7 @@ _Bool selectMicAndAudioDevices() {
     rtaudio_device_info_t virtualMicInfo = rtaudio_get_device_info(virtualDeviceAudio, virtualMicId);
     rtaudio_stream_parameters_t virtualMicParams = { 0 };
     virtualMicParams.device_id = virtualMicId;
-    virtualMicParams.num_channels = virtualMicInfo.output_channels;
+    virtualMicParams.num_channels = virtualMicInfo.input_channels;
 
     rtaudio_device_info_t headphonesInfo = rtaudio_get_device_info(realDeviceAudio, headphonesId);
     rtaudio_stream_parameters_t headphoneParams = { 0 };
@@ -76,11 +75,11 @@ _Bool selectMicAndAudioDevices() {
     int prefFrames = BUFFER_FRAMES;
     int err = rtaudio_open_stream(realDeviceAudio, &headphoneParams, &realMicParams, RTAUDIO_FORMAT_SINT16, realMicInfo.preferred_sample_rate, &prefFrames, &realMicAndHeadphonesCallback, NULL, NULL, NULL);
     if (err > RTAUDIO_ERROR_DEBUG_WARNING) {
-        printf("Failed to open microphone or headphone device due to error: %s\n", micId, rtaudio_error(realDeviceAudio));
+        printf("Failed to open microphone or headphone device due to error: %s\n", rtaudio_error(realDeviceAudio));
         return FALSE;
     }
 
-    err = rtaudio_open_stream(virtualDeviceAudio, &virtualMicParams, NULL, RTAUDIO_FORMAT_SINT16, virtualMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
+    err = rtaudio_open_stream(virtualDeviceAudio, NULL, &virtualMicParams, RTAUDIO_FORMAT_SINT16, virtualMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
     if (err > RTAUDIO_ERROR_DEBUG_WARNING) {
         printf("Failed to open virtual microphone device with id %d due to error: %s\n", virtualMicId, rtaudio_error(virtualDeviceAudio));
         return TRUE;
@@ -112,6 +111,9 @@ int main() {
     while (1) {
         Sleep(1);
     }
+
+    rtaudio_close_stream(realDeviceAudio);
+    rtaudio_close_stream(virtualDeviceAudio);
 
     return 0;
 }
