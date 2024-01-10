@@ -59,7 +59,8 @@ _Bool selectMicAndAudioDevices() {
     realMicParams.device_id = micId;
     realMicParams.num_channels = realMicInfo.input_channels;
 
-    int err = rtaudio_open_stream(audioInstance, NULL, &realMicParams, RTAUDIO_FORMAT_SINT16, realMicInfo.preferred_sample_rate, BUFFER_FRAMES, &micInputCallback, NULL, NULL, NULL);
+    int prefFrames = BUFFER_FRAMES;
+    int err = rtaudio_open_stream(audioInstance, NULL, &realMicParams, RTAUDIO_FORMAT_SINT16, realMicInfo.preferred_sample_rate, &prefFrames, &micInputCallback, NULL, NULL, NULL);
     if (err != RTAUDIO_NO_ERROR) {
         printf("Failed to open microphone device with id %d due to error: %s\n", micId, rtaudio_error(audioInstance));
         return TRUE;
@@ -70,7 +71,7 @@ _Bool selectMicAndAudioDevices() {
     virtualMicParams.device_id = virtualMicId;
     virtualMicParams.num_channels = virtualMicInfo.output_channels;
 
-    err = rtaudio_open_stream(audioInstance, &virtualMicParams, NULL, RTAUDIO_FORMAT_SINT16, virtualMicInfo.preferred_sample_rate, BUFFER_FRAMES, &virtualMicCallback, NULL, NULL, NULL);
+    err = rtaudio_open_stream(audioInstance, &virtualMicParams, NULL, RTAUDIO_FORMAT_SINT16, virtualMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
     if (err != RTAUDIO_NO_ERROR) {
         printf("Failed to open virtual microphone device with id %d due to error: %s\n", virtualMicId, rtaudio_error(audioInstance));
         return TRUE;
@@ -81,7 +82,7 @@ _Bool selectMicAndAudioDevices() {
     headphoneParams.device_id = headphonesId;
     headphoneParams.num_channels = headphonesInfo.output_channels;
 
-    err = rtaudio_open_stream(audioInstance, &headphoneParams, NULL, RTAUDIO_FORMAT_SINT16, headphonesInfo.preferred_sample_rate, BUFFER_FRAMES, &headphoneAudioCallback, NULL, NULL, NULL);
+    err = rtaudio_open_stream(audioInstance, &headphoneParams, NULL, RTAUDIO_FORMAT_SINT16, headphonesInfo.preferred_sample_rate, &prefFrames, &headphoneAudioCallback, NULL, NULL, NULL);
     if (err != RTAUDIO_NO_ERROR) {
         printf("Failed to open headphone device with id %d due to error: %s\n", virtualMicId, rtaudio_error(audioInstance));
         return TRUE;
