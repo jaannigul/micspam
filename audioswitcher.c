@@ -25,8 +25,10 @@ int virtualMicCallback(void* out, void* in, unsigned int nFrames,
     void* userdata) {
 
     if (shouldForwardMicData) {
-        if (WaitForSingleObject(virtualMicDataMutex, 20) == WAIT_OBJECT_0)
-            memcpy(out, virtualMicBuf, BUFFER_FRAMES);
+
+        DWORD res = WaitForSingleObject(virtualMicDataMutex, 20);
+        if (res == WAIT_OBJECT_0)
+            memcpy(in, virtualMicBuf, BUFFER_FRAMES);
         ReleaseMutex(virtualMicDataMutex);
     }
 
@@ -34,7 +36,7 @@ int virtualMicCallback(void* out, void* in, unsigned int nFrames,
 }
 
 void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio) {
-    virtualMicDataMutex = CreateMutex(NULL, TRUE, TEXT("micToVmic"));
+    virtualMicDataMutex = CreateMutex(NULL, FALSE, TEXT("micToVmic"));
     if (virtualMicDataMutex == INVALID_HANDLE_VALUE) {
         printf("Failed to create a mutex for necessary sound data transfer between mic and virtual mic.\n");
         return;
