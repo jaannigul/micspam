@@ -1,11 +1,11 @@
 #include "audioswitcher.h"
-#include "globals.h"
+#include "consts.h"
+#include "utils/queue/sts_queue.h"
 
 #include <stdio.h>
 #include <Windows.h>
 
-HANDLE virtualMicDataMutex = INVALID_HANDLE_VALUE;
-INT16 virtualMicBuf[BUFFER_FRAMES];
+StsHeader* virtualMicPlaybackQueue = NULL;
 
 _Bool shouldForwardMicData = 1;
 
@@ -13,9 +13,11 @@ int realMicAndHeadphonesCallback(INT16* out, INT16* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
     void* userdata) {
 
-    if(shouldForwardMicData && WaitForSingleObject(virtualMicDataMutex, 20) == WAIT_OBJECT_0)
-        memcpy(virtualMicBuf, in, BUFFER_FRAMES);
-    ReleaseMutex(virtualMicDataMutex);
+    INT16* forwardData = calloc(BUFFER_FRAMES, sizeof(INT16));
+    if (forwardData) {
+        memcpy(forwardData, in, BUFFER_FRAMES);
+        StsQueue.push(virtualMicPlaybackQueue, forwardData);
+    }
 
     return 0;
 }
@@ -24,19 +26,17 @@ int virtualMicCallback(void* out, void* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
     void* userdata) {
 
-    if (shouldForwardMicData) {
-        if (WaitForSingleObject(virtualMicDataMutex, 20) == WAIT_OBJECT_0)
-            memcpy(out, virtualMicBuf, BUFFER_FRAMES);
-        ReleaseMutex(virtualMicDataMutex);
-    }
+    INT16* playbackData = StsQueue.pop(virtualMicPlaybackQueue);
+    if (playbackData)
+        memcpy(out, playbackData, BUFFER_FRAMES);
 
     return 0;
 }
 
 void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio) {
-    virtualMicDataMutex = CreateMutex(NULL, FALSE, TEXT("micToVmic"));
-    if (virtualMicDataMutex == INVALID_HANDLE_VALUE) {
-        printf("Failed to create a mutex for necessary sound data transfer between mic and virtual mic.\n");
+    virtualMicPlaybackQueue = StsQueue.create();
+    if (virtualMicPlaybackQueue == NULL) {
+        printf("Failed to create audio playback queue to send audio from real mic to virtual mic.\n");
         return;
     }
 
@@ -48,6 +48,8 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
         //if(GetAsyncKeyState()) break;
         Sleep(1);
     }
+
+    StsQueue.destroy(virtualMicPlaybackQueue);
 
     rtaudio_close_stream(realDeviceAudio);
     rtaudio_close_stream(virtualDeviceAudio);

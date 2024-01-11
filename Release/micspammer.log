@@ -1,12 +1,1 @@
-﻿  audioplayer.c
-  audioswitcher.c
-C:\Users\madis\source\repos\micspam\audioswitcher.c(12,41): warning C4028: formal parameter 1 different from declaration
-C:\Users\madis\source\repos\micspam\audioswitcher.c(12,53): warning C4028: formal parameter 2 different from declaration
-  Generating code
-  2 of 9 functions (22.2%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Release\micspammer.exe
-  'pwsh.exe' is not recognized as an internal or external command,
-  operable program or batch file.
+﻿  micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Release\micspammer.exe

@@ -21,13 +21,19 @@
     <ClCompile Include="audioswitcher.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils\queue\sts_queue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audioswitcher.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="globals.h">
+    <ClInclude Include="consts.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\queue\sts_queue.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
