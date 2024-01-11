@@ -154,12 +154,15 @@
     <ClCompile Include="utils\queue\sts_queue.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="audioPlayer.h" />
     <ClInclude Include="audioswitcher.h" />
     <ClInclude Include="consts.h" />
     <ClInclude Include="deviceIDs.h" />
     <ClInclude Include="utils\queue\sts_queue.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
     <None Include="getDeviceIDByIndex.ps1" />
     <None Include="switchdevice.ps1" />
   </ItemGroup>
