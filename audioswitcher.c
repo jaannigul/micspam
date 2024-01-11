@@ -16,7 +16,7 @@ int realMicAndHeadphonesCallback(INT16* out, INT16* in, unsigned int nFrames,
     INT16* forwardData = calloc(BUFFER_FRAMES, sizeof(INT16));
     if (forwardData) {
         memcpy(forwardData, in, BUFFER_FRAMES);
-        StsQueue.push(virtualMicPlaybackQueue, forwardData);
+        StsQueue.push(virtualMicPlaybackQueue, forwardData, REAL_MIC_DATA_PRIORITY);
     }
 
     return 0;

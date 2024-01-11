@@ -1,22 +1,6 @@
-﻿  audioplayer.c
-C:\Users\madis\source\repos\micspam\audioplayer.c(44,27): warning C4101: 'virtualMicInfo': unreferenced local variable
-  audioswitcher.c
+﻿  audioswitcher.c
 C:\Users\madis\source\repos\micspam\audioswitcher.c(12,41): warning C4028: formal parameter 1 different from declaration
 C:\Users\madis\source\repos\micspam\audioswitcher.c(12,53): warning C4028: formal parameter 2 different from declaration
-  sts_queue.c
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(50,34): warning C4047: 'function': 'pthread_mutex_t *' differs in levels of indirection from 'pthread_mutex_t'
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(50,27): warning C4024: 'pthread_mutex_lock': different types for formal and actual parameter 1
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(66,36): warning C4047: 'function': 'pthread_mutex_t *' differs in levels of indirection from 'pthread_mutex_t'
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(66,29): warning C4024: 'pthread_mutex_unlock': different types for formal and actual parameter 1
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(70,34): warning C4047: 'function': 'pthread_mutex_t *' differs in levels of indirection from 'pthread_mutex_t'
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(70,27): warning C4024: 'pthread_mutex_lock': different types for formal and actual parameter 1
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(75,37): warning C4047: 'function': 'pthread_mutex_t *' differs in levels of indirection from 'pthread_mutex_t'
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(75,30): warning C4024: 'pthread_mutex_unlock': different types for formal and actual parameter 1
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(86,37): warning C4047: 'function': 'pthread_mutex_t *' differs in levels of indirection from 'pthread_mutex_t'
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(86,30): warning C4024: 'pthread_mutex_unlock': different types for formal and actual parameter 1
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(94,3): warning C4113: 'void (__cdecl *)(StsHeader *)' differs in parameter lists from 'void (__cdecl *const )(StsHeader *,void *)'
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(95,3): warning C4113: 'void (__cdecl *)(StsHeader *,void *,int)' differs in parameter lists from 'void (__cdecl *const )(StsHeader *)'
-  Generating Code...
   micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

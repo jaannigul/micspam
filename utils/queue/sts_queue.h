@@ -15,8 +15,8 @@ typedef struct StsHeader StsHeader;
 typedef struct {
 	StsHeader* (* const create)();
 	void (* const destroy)(StsHeader* handle);
-	void (* const push)(StsHeader* handle, void* elem);
 	void (* const removeAll)(StsHeader* header);
+	void (* const push)(StsHeader* handle, void* elem, int priority);
 	void* (* const pop)(StsHeader* handle);
 } _StsQueue;
 
