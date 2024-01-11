@@ -8,6 +8,7 @@
 
 #include "audioswitcher.h"
 #include "globals.h"
+#include "deviceIDs.h"
 
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
@@ -19,6 +20,40 @@ void listDevices() {
         
         printf("[%d]: %s, input channels: %d, output channels: %d\n", i, deviceInfo.name, deviceInfo.input_channels, deviceInfo.output_channels);
     }
+}
+
+char* queryDeviceIDbyIndex(int deviceIndex) {
+    static char deviceID[256];
+    char command[256];
+    FILE* fp;
+    errno_t err;
+
+    // Construct the command to call the PowerShell script with the device index
+    sprintf_s(command, sizeof(command), "powershell -ExecutionPolicy Bypass -File GetDeviceIDByIndex.ps1 -DeviceIndex %d > deviceid.txt", deviceIndex);
+
+    // Execute the command
+    system(command);
+
+    // Open the file with fopen_s
+    err = fopen_s(&fp, "deviceid.txt", "r");
+    if (err != 0 || fp == NULL) {
+        perror("Error opening file");
+        return NULL;
+    }
+
+    // Read the output from the file
+    if (fgets(deviceID, sizeof(deviceID), fp) == NULL) {
+        printf("No output captured\n");
+        fclose(fp);
+        return NULL;
+    }
+
+    // Close the file and remove it
+    fclose(fp);
+    remove("deviceid.txt");
+
+    // Return the device ID
+    return deviceID;
 }
 
 _Bool selectMicAndAudioDevices() {
@@ -35,7 +70,9 @@ _Bool selectMicAndAudioDevices() {
     int micId = atoi(micSelectedId);
     int virtualMicId = atoi(virtualMicSelectedId);
     int headphonesId = atoi(headphonesSelectedId);
-
+    VIRTUAL_AUDIO_DEVICE_ID = queryDeviceIDbyIndex(virtualMicId);
+    AUDIO_DEVICE_ID = queryDeviceIDbyIndex(micId);
+    HEADPHONES_ID = queryDeviceIDbyIndex(headphonesId);
     rtaudio_device_info_t realMicInfo = rtaudio_get_device_info(realDeviceAudio, micId);
     rtaudio_stream_parameters_t realMicParams = { 0 };
     realMicParams.device_id = micId;

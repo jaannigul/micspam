@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <Windows.h>
+#include "deviceIDs.h"
 
 HANDLE virtualMicDataMutex = INVALID_HANDLE_VALUE;
 INT16 virtualMicBuf[BUFFER_FRAMES];
@@ -33,6 +34,13 @@ int virtualMicCallback(void* out, void* in, unsigned int nFrames,
     return 0;
 }
 
+
+void switchDefaultAudioInputDevice(const char* targetDeviceID) {
+    char command[1024];
+    sprintf_s(command, "powershell -ExecutionPolicy Bypass -File \"switchdevice.ps1\" -targetDeviceID \"%s\"", targetDeviceID);
+    system(command);
+}
+
 void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio) {
     virtualMicDataMutex = CreateMutex(NULL, FALSE, TEXT("micToVmic"));
     if (virtualMicDataMutex == INVALID_HANDLE_VALUE) {
@@ -42,7 +50,7 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
 
     rtaudio_start_stream(realDeviceAudio);
     rtaudio_start_stream(virtualDeviceAudio);
-
+    printf(VIRTUAL_AUDIO_DEVICE_ID);
     // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)
     while (1) {
         //if(GetAsyncKeyState()) break;

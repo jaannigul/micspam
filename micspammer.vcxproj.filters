@@ -21,6 +21,9 @@
     <ClCompile Include="audioswitcher.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="deviceIDs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audioswitcher.h">
@@ -29,5 +32,12 @@
     <ClInclude Include="globals.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="deviceIDs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="switchdevice.ps1" />
+    <None Include="getDeviceIDByIndex.ps1" />
   </ItemGroup>
 </Project>
