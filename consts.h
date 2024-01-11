@@ -6,7 +6,4 @@
 
 #define USER_AUDIO_FILES_PATH "./audiosamples"
 
-const char* ALLOWED_AUDIO_TYPES[] = {
-	"wav",
-	"mp3"
-};
+extern const char* ALLOWED_AUDIO_TYPES[];

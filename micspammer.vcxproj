@@ -164,7 +164,8 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
-    <None Include="getDeviceIDByIndex.ps1" />
+    <None Include="getDeviceIDByName.ps1" />
+    <None Include="listDevices.ps1" />
     <None Include="switchdevice.ps1" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

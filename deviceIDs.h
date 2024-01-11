@@ -1,7 +1,8 @@
 #pragma once
-extern char* VIRTUAL_AUDIO_DEVICE_ID;
-extern char* AUDIO_DEVICE_ID;
-extern char* HEADPHONES_ID;
+#include <stddef.h>
+extern char VIRTUAL_AUDIO_DEVICE_ID[256];
+extern char AUDIO_DEVICE_ID[256];
+extern char HEADPHONES_ID[256];
 
-char* queryDeviceIDbyIndex(int deviceIndex);
+void queryDeviceIDbyName(char* deviceName, char* deviceID, size_t size);
 void switchDefaultAudioInputDevice(const char* targetDeviceID);

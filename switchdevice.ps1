@@ -1,6 +1,7 @@
-﻿﻿Import-Module AudioDeviceCmdlets
-params(
-	[string]$targetDeviceID
+﻿param(
+    [string]$targetDeviceID
 )
+Import-Module AudioDeviceCmdlets
+Write-Output "Setting the default audio device to $targetDeviceID"
 Set-AudioDevice -id $targetDeviceID
-Write-Output 'Setting to device id $targetDeviceID'
+Write-Output "Setting to device id $targetDeviceID"

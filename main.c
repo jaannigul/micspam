@@ -24,7 +24,7 @@ void listDevices() {
 
 _Bool selectMicAndAudioDevices() {
     char micSelectedId[8] = { 0 }, headphonesSelectedId[8] = { 0 }, virtualMicSelectedId[8] = { 0 };
-
+    char *micName = NULL, *vacName = NULL, *headphonesName = NULL;
     listDevices();
 
     printf("Choose your real microphone device's number from the list: ");
@@ -36,9 +36,13 @@ _Bool selectMicAndAudioDevices() {
     int micId = atoi(micSelectedId);
     int virtualMicId = atoi(virtualMicSelectedId);
     int headphonesId = atoi(headphonesSelectedId);
-    VIRTUAL_AUDIO_DEVICE_ID = queryDeviceIDbyIndex(virtualMicId);
-    AUDIO_DEVICE_ID = queryDeviceIDbyIndex(micId);
-    HEADPHONES_ID = queryDeviceIDbyIndex(headphonesId);
+    micName = rtaudio_get_device_info(realDeviceAudio, micId).name;
+    vacName = rtaudio_get_device_info(realDeviceAudio, virtualMicId).name;
+    headphonesName = rtaudio_get_device_info(realDeviceAudio, headphonesId).name;
+    //rtaudio indices are not the same as powershell's output indices
+    queryDeviceIDbyName(vacName, VIRTUAL_AUDIO_DEVICE_ID, sizeof(VIRTUAL_AUDIO_DEVICE_ID));
+    queryDeviceIDbyName(micName, AUDIO_DEVICE_ID, sizeof(AUDIO_DEVICE_ID));
+    queryDeviceIDbyName(headphonesName, HEADPHONES_ID, sizeof(HEADPHONES_ID));
     rtaudio_device_info_t realMicInfo = rtaudio_get_device_info(realDeviceAudio, micId);
     rtaudio_stream_parameters_t realMicParams = { 0 };
     realMicParams.device_id = micId;

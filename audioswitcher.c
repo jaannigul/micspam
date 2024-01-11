@@ -41,6 +41,9 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
 
     rtaudio_start_stream(realDeviceAudio);
     rtaudio_start_stream(virtualDeviceAudio);
+    printf("aaaaa %s\n", VIRTUAL_AUDIO_DEVICE_ID);
+    printf("bbbbb %s\n", AUDIO_DEVICE_ID);
+    printf("ccccc %s\n", HEADPHONES_ID);
     switchDefaultAudioInputDevice(VIRTUAL_AUDIO_DEVICE_ID);
 
     // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)

@@ -6,6 +6,10 @@
 pthread_t soundPlayer;
 pthread_mutex_t threadCreationLock;
 
+const char* ALLOWED_AUDIO_TYPES[] = {
+	"wav",
+	"mp3"
+};
 _Bool setupAudioPlayer() {
 	if (pthread_mutex_init(&threadCreationLock, NULL) != 0) {
 		return FALSE;
@@ -38,7 +42,7 @@ _Bool checkForSuffix(const char* str, const char* suffix)
 }
 
 _Bool isAllowedAudioFile(const char* filename) {
-	for (int i = 0; i < countof(ALLOWED_AUDIO_TYPES); i++) {
+	for (int i = 0; i < _countof(ALLOWED_AUDIO_TYPES); i++) {
 		if (checkForSuffix(filename, ALLOWED_AUDIO_TYPES[i]))
 			return TRUE;
 	}

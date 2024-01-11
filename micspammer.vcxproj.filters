@@ -50,8 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="switchdevice.ps1" />
-    <None Include="getDeviceIDByIndex.ps1" />
+    <None Include="getDeviceIDByName.ps1" />
     <None Include=".gitignore" />
     <None Include=".gitattributes" />
+    <None Include="listDevices.ps1" />
   </ItemGroup>
 </Project>
