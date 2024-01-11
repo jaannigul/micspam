@@ -87,7 +87,7 @@ int main() {
     }
 
     if (!setupAudioPlayer()) {
-        printf("Error setting up the audio player to asyncronously play custom audio.\n", );
+        printf("Error setting up the audio player to asyncronously play custom audio.\n");
 
         return 1;
     }
