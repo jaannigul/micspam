@@ -21,11 +21,7 @@
     <ClCompile Include="audioswitcher.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="deviceIDs.c">
-=======
-    <ClCompile Include="utils\queue\sts_queue.c">
->>>>>>> 83b7a0ce92dc6b186360103a62de2cf1ca107f9c
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -36,7 +32,6 @@
     <ClInclude Include="consts.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="deviceIDs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -44,10 +39,5 @@
   <ItemGroup>
     <None Include="switchdevice.ps1" />
     <None Include="getDeviceIDByIndex.ps1" />
-=======
-    <ClInclude Include="utils\queue\sts_queue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
->>>>>>> 83b7a0ce92dc6b186360103a62de2cf1ca107f9c
   </ItemGroup>
 </Project>

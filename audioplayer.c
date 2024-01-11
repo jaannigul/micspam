@@ -5,9 +5,10 @@
 #include <pthread.h>
 #include <rtaudio/rtaudio_c.h>
 #include <Windows.h>
-
+#include "deviceIDs.h"
 #include "audioswitcher.h"
 #include "consts.h"
+
 
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
