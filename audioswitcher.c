@@ -8,8 +8,6 @@
 
 StsHeader* virtualMicPlaybackQueue = NULL;
 
-_Bool shouldForwardMicData = 1;
-
 int realMicAndHeadphonesCallback(INT16* out, INT16* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
     void* userdata) {
@@ -34,13 +32,6 @@ int virtualMicCallback(void* out, void* in, unsigned int nFrames,
     return 0;
 }
 
-
-void switchDefaultAudioInputDevice(const char* targetDeviceID) {
-    char command[1024];
-    sprintf_s(command, "powershell -ExecutionPolicy Bypass -File \"switchdevice.ps1\" -targetDeviceID \"%s\"", targetDeviceID);
-    system(command);
-}
-
 void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio) {
     virtualMicPlaybackQueue = StsQueue.create();
     if (virtualMicPlaybackQueue == NULL) {
@@ -50,7 +41,8 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
 
     rtaudio_start_stream(realDeviceAudio);
     rtaudio_start_stream(virtualDeviceAudio);
-    printf(VIRTUAL_AUDIO_DEVICE_ID);
+    switchDefaultAudioInputDevice(VIRTUAL_AUDIO_DEVICE_ID);
+
     // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)
     while (1) {
         //if(GetAsyncKeyState()) break;
@@ -59,6 +51,7 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
 
     StsQueue.destroy(virtualMicPlaybackQueue);
 
+    switchDefaultAudioInputDevice(AUDIO_DEVICE_ID);
     rtaudio_close_stream(realDeviceAudio);
     rtaudio_close_stream(virtualDeviceAudio);
 }

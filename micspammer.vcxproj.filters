@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="audioplayer.c">
+    <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="audioswitcher.c">
@@ -25,6 +25,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\queue\sts_queue.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="audioplayer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,7 +44,7 @@
     <ClInclude Include="utils\queue\sts_queue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="audioPlayer.h">
+    <ClInclude Include="audioplayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
