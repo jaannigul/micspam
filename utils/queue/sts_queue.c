@@ -15,7 +15,7 @@ struct StsHeader {
 };
 
 static StsHeader* create() {
-	StsHeader* handle = malloc(sizeof(StsHeader*));
+	StsHeader* handle = malloc(sizeof(StsHeader));
 	handle->head = NULL;
 	handle->tail = NULL;
 
@@ -42,7 +42,7 @@ static void destroy(StsHeader* header) {
 
 static void push(StsHeader* header, void* elem, int priority) {
 	// Create new element
-	StsElement* element = malloc(sizeof(StsElement*));
+	StsElement* element = malloc(sizeof(StsElement));
 	element->value = elem;
 	element->priority = priority;
 	element->next = NULL;
