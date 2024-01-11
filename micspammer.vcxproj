@@ -150,12 +150,21 @@
   <ItemGroup>
     <ClCompile Include="audioplayer.c" />
     <ClCompile Include="audioswitcher.c" />
+<<<<<<< HEAD
     <ClCompile Include="deviceIDs.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audioswitcher.h" />
     <ClInclude Include="deviceIDs.h" />
     <ClInclude Include="globals.h" />
+=======
+    <ClCompile Include="utils\queue\sts_queue.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="audioswitcher.h" />
+    <ClInclude Include="consts.h" />
+    <ClInclude Include="utils\queue\sts_queue.h" />
+>>>>>>> 83b7a0ce92dc6b186360103a62de2cf1ca107f9c
   </ItemGroup>
   <ItemGroup>
     <None Include="getDeviceIDByIndex.ps1" />

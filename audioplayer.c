@@ -7,8 +7,7 @@
 #include <Windows.h>
 
 #include "audioswitcher.h"
-#include "globals.h"
-#include "deviceIDs.h"
+#include "consts.h"
 
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
@@ -95,7 +94,8 @@ _Bool selectMicAndAudioDevices() {
         return FALSE;
     }
 
-    err = rtaudio_open_stream(virtualDeviceAudio, &virtualMicParams, NULL, RTAUDIO_FORMAT_SINT16, virtualMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
+    // use the real mic sample rate on virtual mic too
+    err = rtaudio_open_stream(virtualDeviceAudio, &virtualMicParams, NULL, RTAUDIO_FORMAT_SINT16, realMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
     if (err > RTAUDIO_ERROR_DEBUG_WARNING) {
         printf("Failed to open virtual microphone device with id %d due to error: %s\n", virtualMicId, rtaudio_error(virtualDeviceAudio));
         return TRUE;
