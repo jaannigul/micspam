@@ -12,3 +12,4 @@ C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\libmp3lame.DLL
 C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
 C:\Users\madis\source\repos\micspam\Debug\micspammer.vcxproj.CopyComplete
 C:\Users\madis\source\repos\micspam\Debug\rtaudiod.dll
+C:\Users\madis\source\repos\micspam\Debug\pthreadVC3d.dll
