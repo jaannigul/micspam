@@ -1,16 +1,12 @@
 #include "audioplayer.h"
 #include "consts.h"
 
-#include <stdatomic.h>
+#include <signal.h>
 
 pthread_t soundPlayer;
-pthread_mutex_t threadCreationLock;
+_Bool threadShouldBeRunning = FALSE; // shitty workaround for stdatomic.h to check if our audio player thread is running
 
 _Bool setupAudioPlayer() {
-	if (pthread_mutex_init(&threadCreationLock, NULL) != 0) {
-		return FALSE;
-	}
-
 	if (!directoryExists(USER_AUDIO_FILES_PATH))
 		if (CreateDirectory(USER_AUDIO_FILES_PATH, NULL) == 0)
 			return FALSE;
@@ -38,7 +34,7 @@ _Bool checkForSuffix(const char* str, const char* suffix)
 }
 
 _Bool isAllowedAudioFile(const char* filename) {
-	for (int i = 0; i < countof(ALLOWED_AUDIO_TYPES); i++) {
+	for (int i = 0; i < _countof(ALLOWED_AUDIO_TYPES); i++) {
 		if (checkForSuffix(filename, ALLOWED_AUDIO_TYPES[i]))
 			return TRUE;
 	}
@@ -88,15 +84,25 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 	return i;
 }
 
+void playAudioThread(const char* filePath) {
+	printf("%s\n", filePath);
+}
+
+// Toggles the audio playing thread, function not for multithread use
 int togglePlayingAudio(char* audioPath) {
 	if (GetFileAttributes(audioPath) == INVALID_FILE_ATTRIBUTES)
 		return PLAYER_COULDNT_FIND_AUDIO;
 
-	pthread_mutex_lock(&threadCreationLock);
+	if (InterlockedCompareExchange(&threadShouldBeRunning, FALSE, TRUE) == TRUE) // if thread had running state on, kill it to stop playing audio
+		if (pthread_kill(soundPlayer, SIGINT) != 0) {
+			InterlockedExchange(&threadShouldBeRunning, TRUE);
+			return PLAYER_THREAD_FAILED_TO_KILL;
+		}
+		else
+			return PLAYER_NO_ERROR;
 
-
-
-	pthread_mutex_unlock(&threadCreationLock);
+	InterlockedExchange(&threadShouldBeRunning, TRUE);
+	pthread_create(&soundPlayer, NULL, &playAudioThread, &audioPath);
 
 	return PLAYER_NO_ERROR;
 }

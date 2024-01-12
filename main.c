@@ -9,6 +9,7 @@
 #include "audioswitcher.h"
 #include "consts.h"
 
+#include "audioplayer.h"
 
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
@@ -94,7 +95,8 @@ int main() {
 
     if (!selectMicAndAudioDevices()) return 1;
 
-    startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
+    //startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
+    togglePlayingAudio("test.mp3");
 
     return 0;
 }
