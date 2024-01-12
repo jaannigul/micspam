@@ -2,19 +2,12 @@
 #include "consts.h"
 
 #include <signal.h>
+#include <stdio.h>
 
 pthread_t soundPlayer;
 _Bool threadShouldBeRunning = FALSE; // shitty workaround for stdatomic.h to check if our audio player thread is running
 
-_Bool setupAudioPlayer() {
-	if (!directoryExists(USER_AUDIO_FILES_PATH))
-		if (CreateDirectory(USER_AUDIO_FILES_PATH, NULL) == 0)
-			return FALSE;
-
-	return TRUE;
-}
-
-BOOL directoryExists(LPCTSTR path)
+BOOL directoryExists(const char* path)
 {
 	DWORD dwAttrib = GetFileAttributes(path);
 
@@ -42,6 +35,15 @@ _Bool isAllowedAudioFile(const char* filename) {
 	return FALSE;
 }
 
+_Bool setupAudioPlayer() {
+	if (!directoryExists(USER_AUDIO_FILES_PATH))
+		if (CreateDirectory(USER_AUDIO_FILES_PATH, NULL) == 0)
+			return FALSE;
+
+	return TRUE;
+}
+
+
 // count how many files user has in a specific folder
 int countFilesInDirectory(const char* path) {
 	WIN32_FIND_DATA fileData;
@@ -51,11 +53,11 @@ int countFilesInDirectory(const char* path) {
 	if (hFile == INVALID_HANDLE_VALUE)
 		return filesTotal;
 
-	if (GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY == 0)
+	if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0)
 		filesTotal++;
 
 	while (FindNextFile(hFile, &fileData) != 0)
-		if (GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY == 0)
+		if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0)
 			filesTotal++;
 
 	return filesTotal;
@@ -70,13 +72,13 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 	if (hFile == INVALID_HANDLE_VALUE)
 		return 0;
 
-	if (GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY == 0 && isAllowedAudioFile(fileData.cFileName)) {
+	if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0 && isAllowedAudioFile(fileData.cFileName)) {
 		strcpy_s(fileList[i], sizeof(fileList[i]), fileData.cFileName);
 		i++;
 	}
 
 	while (FindNextFile(hFile, &fileData) != 0)
-		if (GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY == 0 && isAllowedAudioFile(fileData.cFileName)) {
+		if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0 && isAllowedAudioFile(fileData.cFileName)) {
 			strcpy_s(fileList[i], sizeof(fileList[i]), fileData.cFileName);
 			i++;
 		}
@@ -85,11 +87,11 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 }
 
 void playAudioThread(const char* filePath) {
-	printf("%s\n", filePath);
+
 }
 
 // Toggles the audio playing thread, function not for multithread use
-int togglePlayingAudio(char* audioPath) {
+int togglePlayingAudio(const char* audioPath) {
 	if (GetFileAttributes(audioPath) == INVALID_FILE_ATTRIBUTES)
 		return PLAYER_COULDNT_FIND_AUDIO;
 
@@ -102,7 +104,8 @@ int togglePlayingAudio(char* audioPath) {
 			return PLAYER_NO_ERROR;
 
 	InterlockedExchange(&threadShouldBeRunning, TRUE);
-	pthread_create(&soundPlayer, NULL, &playAudioThread, &audioPath);
+	pthread_create(&soundPlayer, NULL, playAudioThread, audioPath);
+	pthread_join(soundPlayer, NULL);
 
 	return PLAYER_NO_ERROR;
 }

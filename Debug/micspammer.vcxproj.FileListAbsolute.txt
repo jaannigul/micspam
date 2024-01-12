@@ -1,10 +1,4 @@
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\micspammer.vcxproj.CopyComplete
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\micspammer.exe
-C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
-<<<<<<< HEAD
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\rtaudiod.dll
-=======
 C:\Users\madis\source\repos\micspam\Debug\micspammer.vcxproj.CopyComplete
-C:\Users\madis\source\repos\micspam\Debug\rtaudiod.dll
+C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
 C:\Users\madis\source\repos\micspam\Debug\pthreadVC3d.dll
->>>>>>> 83b7a0ce92dc6b186360103a62de2cf1ca107f9c
+C:\Users\madis\source\repos\micspam\Debug\rtaudiod.dll

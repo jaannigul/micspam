@@ -99,8 +99,7 @@ int main() {
 
     if (!selectMicAndAudioDevices()) return 1;
 
-    //startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
-    togglePlayingAudio("test.mp3");
+    startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
 
     return 0;
 }

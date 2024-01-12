@@ -1,7 +1,0 @@
-C:\Users\madis\source\repos\micspam\Release\micspammer.exe
-<<<<<<< HEAD
-C:\Users\madis\source\repos\micspam\Release\micspammer.vcxproj.CopyComplete
-C:\Users\madis\source\repos\micspam\Release\rtaudiod.dll
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Release\micspammer.exe
-=======
->>>>>>> 83b7a0ce92dc6b186360103a62de2cf1ca107f9c

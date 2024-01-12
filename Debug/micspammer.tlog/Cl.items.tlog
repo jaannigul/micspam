@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\audioplayer.c;C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\audioplayer.obj
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\audioswitcher.c;C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\audioswitcher.obj
-C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\deviceIDs.c;C:\Users\PC\Desktop\prog\micspam\micspammer\micspammer\Debug\deviceIDs.obj
-=======
 C:\Users\madis\source\repos\micspam\audioplayer.c;C:\Users\madis\source\repos\micspam\Debug\audioplayer.obj
+C:\Users\madis\source\repos\micspam\main.c;C:\Users\madis\source\repos\micspam\Debug\main.obj
 C:\Users\madis\source\repos\micspam\audioswitcher.c;C:\Users\madis\source\repos\micspam\Debug\audioswitcher.obj
+C:\Users\madis\source\repos\micspam\deviceIDs.c;C:\Users\madis\source\repos\micspam\Debug\deviceIDs.obj
 C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c;C:\Users\madis\source\repos\micspam\Debug\sts_queue.obj
->>>>>>> 83b7a0ce92dc6b186360103a62de2cf1ca107f9c

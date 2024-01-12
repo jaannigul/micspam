@@ -1,26 +1,15 @@
 ﻿  audioplayer.c
-C:\Users\madis\source\repos\micspam\audioplayer.c(9,13): error C2374: 'ALLOWED_AUDIO_TYPES': redefinition; multiple initialization
-C:\Users\madis\source\repos\micspam\consts.h(9,20): message : see declaration of 'ALLOWED_AUDIO_TYPES'
-C:\Users\madis\source\repos\micspam\audioplayer.c(14,7): warning C4013: 'directoryExists' undefined; assuming extern returning int
-C:\Users\madis\source\repos\micspam\audioplayer.c(58,75): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
-C:\Users\madis\source\repos\micspam\audioplayer.c(62,76): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
-C:\Users\madis\source\repos\micspam\audioplayer.c(77,76): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
-C:\Users\madis\source\repos\micspam\audioplayer.c(78,23): warning C4090: 'function': different 'const' qualifiers
-C:\Users\madis\source\repos\micspam\audioplayer.c(83,77): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
-C:\Users\madis\source\repos\micspam\audioplayer.c(84,24): warning C4090: 'function': different 'const' qualifiers
-C:\Users\madis\source\repos\micspam\audioplayer.c(92,2): warning C4013: 'printf' undefined; assuming extern returning int
-C:\Users\madis\source\repos\micspam\audioplayer.c(100,33): warning C4133: 'function': incompatible types - from 'bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(102,24): warning C4133: 'function': incompatible types - from 'bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(108,22): warning C4133: 'function': incompatible types - from 'bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(109,53): warning C4047: 'function': 'void *(__cdecl *)(void *)' differs in levels of indirection from 'void (__cdecl *)(const char *)'
-C:\Users\madis\source\repos\micspam\audioplayer.c(109,37): warning C4022: 'pthread_create': pointer mismatch for actual parameter 3
-  audioswitcher.c
-C:\Users\madis\source\repos\micspam\audioswitcher.c(11,41): warning C4028: formal parameter 1 different from declaration
-C:\Users\madis\source\repos\micspam\audioswitcher.c(11,53): warning C4028: formal parameter 2 different from declaration
-  deviceIDs.c
-C:\Users\madis\source\repos\micspam\deviceIDs.c(11,38): warning C4028: formal parameter 1 different from declaration
-C:\Users\madis\source\repos\micspam\deviceIDs.c(42,110): warning C4047: 'function': 'const size_t' differs in levels of indirection from 'char [81]'
-C:\Users\madis\source\repos\micspam\deviceIDs.c(42,24): warning C4024: 'sprintf_s': different types for formal and actual parameter 2
-  main.c
-C:\Users\madis\source\repos\micspam\main.c(52,27): warning C4101: 'virtualMicInfo': unreferenced local variable
-  Generating Code...
+C:\Users\madis\source\repos\micspam\audioplayer.c(76,23): warning C4090: 'function': different 'const' qualifiers
+C:\Users\madis\source\repos\micspam\audioplayer.c(82,24): warning C4090: 'function': different 'const' qualifiers
+C:\Users\madis\source\repos\micspam\audioplayer.c(91,35): warning C4474: 'fprintf' : too many arguments passed for format string
+C:\Users\madis\source\repos\micspam\audioplayer.c(91,35): message : placeholders and their parameters expect 0 variadic arguments, but 1 were provided
+C:\Users\madis\source\repos\micspam\audioplayer.c(95,36): warning C4028: formal parameter 1 different from declaration
+C:\Users\madis\source\repos\micspam\audioplayer.c(99,33): warning C4133: 'function': incompatible types - from 'bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(101,24): warning C4133: 'function': incompatible types - from 'bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(107,22): warning C4133: 'function': incompatible types - from 'bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(108,52): warning C4047: 'function': 'void *(__cdecl *)(void *)' differs in levels of indirection from 'void (__cdecl *)(const char *)'
+C:\Users\madis\source\repos\micspam\audioplayer.c(108,37): warning C4022: 'pthread_create': pointer mismatch for actual parameter 3
+C:\Users\madis\source\repos\micspam\audioplayer.c(108,63): warning C4090: 'function': different 'const' qualifiers
+  micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
