@@ -1,7 +1,7 @@
 #include "audioplayer.h"
 #include "consts.h"
 
-#include <Windows.h>
+#include <stdatomic.h>
 
 pthread_t soundPlayer;
 pthread_mutex_t threadCreationLock;
@@ -18,9 +18,9 @@ _Bool setupAudioPlayer() {
 	return TRUE;
 }
 
-BOOL directoryExists(LPCTSTR szPath)
+BOOL directoryExists(LPCTSTR path)
 {
-	DWORD dwAttrib = GetFileAttributes(szPath);
+	DWORD dwAttrib = GetFileAttributes(path);
 
 	return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
 		(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
@@ -46,7 +46,7 @@ _Bool isAllowedAudioFile(const char* filename) {
 	return FALSE;
 }
 
-// count how many audio files user has in a specific folder
+// count how many files user has in a specific folder
 int countFilesInDirectory(const char* path) {
 	WIN32_FIND_DATA fileData;
 	int filesTotal = 0;
@@ -65,6 +65,38 @@ int countFilesInDirectory(const char* path) {
 	return filesTotal;
 }
 
-void getUserAudioFiles(const char* path, OUT const char** fileList) {
+// gets user audio file paths, returns the amount of supported audio files
+int getUserAudioFiles(const char* path, OUT const char** fileList) {
+	int i = 0;
+	WIN32_FIND_DATA fileData;
 
+	HANDLE hFile = FindFirstFile(TEXT(USER_AUDIO_FILES_PATH), &fileData);
+	if (hFile == INVALID_HANDLE_VALUE)
+		return 0;
+
+	if (GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY == 0 && isAllowedAudioFile(fileData.cFileName)) {
+		strcpy_s(fileList[i], sizeof(fileList[i]), fileData.cFileName);
+		i++;
+	}
+
+	while (FindNextFile(hFile, &fileData) != 0)
+		if (GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY == 0 && isAllowedAudioFile(fileData.cFileName)) {
+			strcpy_s(fileList[i], sizeof(fileList[i]), fileData.cFileName);
+			i++;
+		}
+
+	return i;
+}
+
+int togglePlayingAudio(char* audioPath) {
+	if (GetFileAttributes(audioPath) == INVALID_FILE_ATTRIBUTES)
+		return PLAYER_COULDNT_FIND_AUDIO;
+
+	pthread_mutex_lock(&threadCreationLock);
+
+
+
+	pthread_mutex_unlock(&threadCreationLock);
+
+	return PLAYER_NO_ERROR;
 }
