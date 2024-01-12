@@ -1,6 +1,7 @@
 #include "audioplayer.h"
 #include "consts.h"
 
+#include <sndfile.h>
 #include <signal.h>
 #include <stdio.h>
 
@@ -87,7 +88,14 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 }
 
 void playAudioThread(const char* filePath) {
+	SNDFILE* file;
+	SF_INFO info;
 
+	file = sf_open(filePath, SFM_READ, &info);
+	if (!file) {
+		fprintf(stderr, "Audio player thread could not open audio file: %s\n", filePath);
+		return;
+	}
 }
 
 // Toggles the audio playing thread, function not for multithread use

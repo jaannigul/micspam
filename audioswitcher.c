@@ -26,8 +26,10 @@ int virtualMicCallback(void* out, void* in, unsigned int nFrames,
     void* userdata) {
 
     INT16* playbackData = StsQueue.pop(virtualMicPlaybackQueue);
-    if (playbackData)
+    if (playbackData) {
         memcpy(out, playbackData, BUFFER_FRAMES * sizeof(INT16));
+        free(playbackData); // as we malloced it, we have to free this data
+    }
 
     return 0;
 }
@@ -44,7 +46,7 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
     printf("aaaaa %s\n", VIRTUAL_AUDIO_DEVICE_ID);
     printf("bbbbb %s\n", AUDIO_DEVICE_ID);
     printf("ccccc %s\n", HEADPHONES_ID);
-    switchDefaultAudioInputDevice(VIRTUAL_AUDIO_DEVICE_ID);
+    //switchDefaultAudioInputDevice(VIRTUAL_AUDIO_DEVICE_ID);
 
     // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)
     while (1) {
@@ -54,7 +56,7 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
 
     StsQueue.destroy(virtualMicPlaybackQueue);
 
-    switchDefaultAudioInputDevice(AUDIO_DEVICE_ID);
+    //switchDefaultAudioInputDevice(AUDIO_DEVICE_ID);
     rtaudio_close_stream(realDeviceAudio);
     rtaudio_close_stream(virtualDeviceAudio);
 }
