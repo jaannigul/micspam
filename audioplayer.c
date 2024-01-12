@@ -6,6 +6,10 @@
 pthread_t soundPlayer;
 _Bool threadShouldBeRunning = FALSE; // shitty workaround for stdatomic.h to check if our audio player thread is running
 
+const char* ALLOWED_AUDIO_TYPES[] = {
+	"wav",
+	"mp3"
+};
 _Bool setupAudioPlayer() {
 	if (!directoryExists(USER_AUDIO_FILES_PATH))
 		if (CreateDirectory(USER_AUDIO_FILES_PATH, NULL) == 0)
