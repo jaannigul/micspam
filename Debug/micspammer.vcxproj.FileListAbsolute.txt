@@ -10,3 +10,4 @@ C:\Users\madis\source\repos\micspam\Debug\FLAC.dll
 C:\Users\madis\source\repos\micspam\Debug\opus.dll
 C:\Users\madis\source\repos\micspam\Debug\mpg123.dll
 C:\Users\madis\source\repos\micspam\Debug\libmp3lame.DLL
+C:\Users\madis\source\repos\micspam\Debug\samplerate.dll

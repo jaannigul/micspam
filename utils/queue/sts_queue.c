@@ -105,6 +105,7 @@ _StsQueue const StsQueue = {
   create,
   destroy,
   removeAll,
+  freeAllValues,
   push,
   pop
 };
