@@ -39,9 +39,11 @@ void queryDeviceIDbyName(const char* deviceName, char* deviceID, size_t size) {
 
 
 void switchDefaultAudioInputDevice(const char* targetDeviceID) {
-    printf("\nSwitching to %s", targetDeviceID);
     char command[1024];
-    sprintf_s(command, "powershell -ExecutionPolicy Bypass -File \"switchdevice.ps1\" -targetDeviceID \"%s\"", targetDeviceID);
+    int result = sprintf_s(command,sizeof(command), "powershell -ExecutionPolicy Bypass -File \"switchdevice.ps1\" -targetDeviceID \"%s\"", targetDeviceID);
+    if (result < 0)
+    {
+        printf("Error with the command");
+    }
     system(command);
-    printf("Switched default audio input device");
 }
