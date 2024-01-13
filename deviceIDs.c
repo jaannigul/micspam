@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char VIRTUAL_AUDIO_DEVICE_ID[256] = {0};
+char VIRTUAL_AUDIO_DEVICE_OUTPUT_ID[256] = {0};
+char VIRTUAL_AUDIO_DEVICE_INPUT_ID[256] = {0};
 char AUDIO_DEVICE_ID[256] = { 0 };
 char HEADPHONES_ID[256] = { 0 };
 
