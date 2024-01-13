@@ -1,6 +1,5 @@
 #include "audioswitcher.h"
 #include "consts.h"
-#include "utils/queue/sts_queue.h"
 
 #include <stdio.h>
 #include <Windows.h>
@@ -8,26 +7,26 @@
 
 StsHeader* virtualMicPlaybackQueue = NULL;
 
-int realMicAndHeadphonesCallback(INT16* out, INT16* in, unsigned int nFrames,
+int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
     void* userdata) {
 
-    INT16* forwardData = calloc(BUFFER_FRAMES, sizeof(INT16));
+    float* forwardData = calloc(BUFFER_FRAMES, sizeof(float));
     if (forwardData) {
-        memcpy(forwardData, in, BUFFER_FRAMES*sizeof(INT16));
+        memcpy(forwardData, in, BUFFER_FRAMES*sizeof(float));
         StsQueue.push(virtualMicPlaybackQueue, forwardData, REAL_MIC_DATA_PRIORITY);
     }
 
     return 0;
 }
 
-int virtualMicCallback(void* out, void* in, unsigned int nFrames,
+int virtualMicCallback(float* out, float* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
     void* userdata) {
 
-    INT16* playbackData = StsQueue.pop(virtualMicPlaybackQueue);
+    float* playbackData = StsQueue.pop(virtualMicPlaybackQueue);
     if (playbackData) {
-        memcpy(out, playbackData, BUFFER_FRAMES * sizeof(INT16));
+        memcpy(out, playbackData, BUFFER_FRAMES * sizeof(float));
         free(playbackData); // as we malloced it, we have to free this data
     }
 
@@ -47,6 +46,8 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
     printf("bbbbb %s\n", AUDIO_DEVICE_ID);
     printf("ccccc %s\n", HEADPHONES_ID);
     //switchDefaultAudioInputDevice(VIRTUAL_AUDIO_DEVICE_ID);
+
+    togglePlayingAudio("./audiosamples/skrillex.wav");
 
     // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)
     while (1) {

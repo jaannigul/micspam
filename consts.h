@@ -1,5 +1,5 @@
 #pragma once
-#define BUFFER_FRAMES 256
+#define BUFFER_FRAMES 4096
 
 #define REAL_MIC_DATA_PRIORITY 1
 #define MICSPAM_DATA_PRIORITY 2

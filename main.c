@@ -60,14 +60,14 @@ _Bool selectMicAndAudioDevices() {
     headphoneParams.num_channels = headphonesInfo.output_channels;
 
     int prefFrames = BUFFER_FRAMES;
-    int err = rtaudio_open_stream(realDeviceAudio, &headphoneParams, &realMicParams, RTAUDIO_FORMAT_SINT16, realMicInfo.preferred_sample_rate, &prefFrames, &realMicAndHeadphonesCallback, NULL, NULL, NULL);
+    int err = rtaudio_open_stream(realDeviceAudio, &headphoneParams, &realMicParams, RTAUDIO_FORMAT_FLOAT32, realMicInfo.preferred_sample_rate, &prefFrames, &realMicAndHeadphonesCallback, NULL, NULL, NULL);
     if (err > RTAUDIO_ERROR_DEBUG_WARNING) {
         printf("Failed to open microphone or headphone device due to error: %s\n", rtaudio_error(realDeviceAudio));
         return FALSE;
     }
 
     // use the real mic sample rate on virtual mic too
-    err = rtaudio_open_stream(virtualDeviceAudio, &virtualMicParams, NULL, RTAUDIO_FORMAT_SINT16, realMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
+    err = rtaudio_open_stream(virtualDeviceAudio, &virtualMicParams, NULL, RTAUDIO_FORMAT_FLOAT32, realMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
     if (err > RTAUDIO_ERROR_DEBUG_WARNING) {
         printf("Failed to open virtual microphone device with id %d due to error: %s\n", virtualMicId, rtaudio_error(virtualDeviceAudio));
         return TRUE;
@@ -103,3 +103,37 @@ int main() {
 
     return 0;
 }
+
+/*int main(int argc, char** argv)
+{
+    // read whole file
+    SNDFILE* sndfile;
+    SF_INFO sfinfo;
+    sndfile = sf_open("./audiosamples/skrillex.wav", SFM_READ, &sfinfo);
+    if (sndfile == 0)
+    {
+        exit(1);
+    }
+
+    float* audioIn = calloc(sfinfo.channels * sfinfo.frames, sizeof(float));
+    sf_read_float(sndfile, audioIn, sfinfo.channels * sfinfo.frames);
+    // mixdown
+    float* audioOut = calloc(sfinfo.frames, sizeof(float));
+    for (int i = 0; i < sfinfo.frames; i++)
+    {
+        audioOut[i] = 0;
+        for (int j = 0; j < sfinfo.channels; j++)
+            audioOut[i] += audioIn[i * sfinfo.channels + j];
+        audioOut[i] /= sfinfo.channels;
+    }
+    sf_close(sndfile);
+    // write output
+    int frames = sfinfo.frames;
+    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+    sfinfo.channels = 1;
+    sndfile = sf_open("./audiosamples/skrillex2.wav", SFM_WRITE, &sfinfo);
+    sf_write_float(sndfile, audioOut, frames);
+    sf_close(sndfile);
+    // free memory
+    return 0;
+}*/

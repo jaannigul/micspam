@@ -1,4 +1,5 @@
 #include "audioplayer.h"
+#include "audioswitcher.h"
 #include "consts.h"
 
 #include <sndfile.h>
@@ -96,6 +97,35 @@ void playAudioThread(const char* filePath) {
 		fprintf(stderr, "Audio player thread could not open audio file: %s\n", filePath);
 		return;
 	}
+
+	// TODO: fix different sample rate wav being sent to the microphone as input
+	// this could cause distortion
+
+	float audioDataBuf[BUFFER_FRAMES];
+	sf_count_t num_read = 0;
+
+	do {
+		int sendBufIdx = 0; 
+		float* sendBuf = calloc(BUFFER_FRAMES, sizeof(float));
+		for (int repeat = 0; repeat < info.channels; repeat++) { // required for us to fully fill the chunk after 
+			num_read = sf_read_short(file, audioDataBuf, BUFFER_FRAMES);
+			if (num_read <= 0) break;
+
+			for (int i = 0; i < num_read / info.channels - info.channels; i++) {
+				//for (int j = 0; j < info.channels; j++)
+					sendBuf[sendBufIdx] += audioDataBuf[i * info.channels+1];
+				//sendBuf[sendBufIdx] /= info.channels;
+				sendBufIdx++;
+			}
+		}
+
+		// add the data to mic queue
+		// TODO: add this audio to headphone playback queue too
+		StsQueue.push(virtualMicPlaybackQueue, sendBuf, MICSPAM_DATA_PRIORITY);
+	} while (num_read > 0);
+
+
+	InterlockedExchange(&threadShouldBeRunning, FALSE);
 }
 
 // Toggles the audio playing thread, function not for multithread use
@@ -103,13 +133,17 @@ int togglePlayingAudio(const char* audioPath) {
 	if (GetFileAttributes(audioPath) == INVALID_FILE_ATTRIBUTES)
 		return PLAYER_COULDNT_FIND_AUDIO;
 
-	if (InterlockedCompareExchange(&threadShouldBeRunning, FALSE, TRUE) == TRUE) // if thread had running state on, kill it to stop playing audio
+	if (InterlockedCompareExchange(&threadShouldBeRunning, FALSE, TRUE) == TRUE) { // if thread had running state on, kill it to stop playing audio
+		StsQueue.freeAllValues(virtualMicPlaybackQueue); // free all malloced values to avoid a huge memory leak
+		StsQueue.removeAll(virtualMicPlaybackQueue);
+		
 		if (pthread_kill(soundPlayer, SIGINT) != 0) {
 			InterlockedExchange(&threadShouldBeRunning, TRUE);
 			return PLAYER_THREAD_FAILED_TO_KILL;
 		}
 		else
 			return PLAYER_NO_ERROR;
+	}
 
 	InterlockedExchange(&threadShouldBeRunning, TRUE);
 	pthread_create(&soundPlayer, NULL, playAudioThread, audioPath);

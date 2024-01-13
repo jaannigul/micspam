@@ -33,6 +33,19 @@ static void removeAll(StsHeader* header) {
 	}
 }
 
+static void freeAllValues(StsHeader* header) {
+	pthread_mutex_lock(&header->mutex);
+
+	StsElement* el = header->head;
+	while (el != NULL) {
+		StsElement* next = el->next;
+		free(el->value);
+		el = next;
+	}
+
+	pthread_mutex_unlock(&header->mutex);
+}
+
 static void destroy(StsHeader* header) {
 	pthread_mutex_destroy(&header->mutex);
 	removeAll(header);
