@@ -123,10 +123,38 @@ void playAudioThread(const char* filePath) {
 			fprintf(stderr, "Audio player thread failed to convert sample rate, output audio can be wonky");
 
 		memcpy(audioDataBuf, tempAudioDataBuf, conversionData.output_frames_gen * info.channels);
+		free(tempAudioDataBuf);
 	}
 
-	// simplify all channels down to one
+	tempAudioDataBuf = calloc(info.frames, sizeof(float));
+	if (cancellationRequest == TRUE) goto cleanup;
 
+	// simplify all channels down to one
+	for (int i = 0; i < info.frames; i++)
+	{
+		for (int j = 0; j < info.channels; j++)
+			tempAudioDataBuf[i] += audioDataBuf[i * info.channels + j];
+		tempAudioDataBuf[i] /= info.channels;
+	}
+	memcpy(audioDataBuf, tempAudioDataBuf, info.frames);
+
+	// send the data over, while periodically checking for cancel request
+	int framesLeft = info.frames;
+	int framesCopied = 0;
+	while (framesLeft > 0) {
+		if (cancellationRequest == TRUE) goto cleanup;
+
+		float* buf = calloc(BUFFER_FRAMES, sizeof(float));
+		if (framesLeft >= BUFFER_FRAMES)
+			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, BUFFER_FRAMES);
+		else
+			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, framesLeft);
+
+		StsQueue.push(virtualMicPlaybackQueue, buf, MICSPAM_DATA_PRIORITY);
+
+		framesCopied++;
+		framesLeft -= BUFFER_FRAMES;
+	}
 
 cleanup:
 	if(audioDataBuf) free(audioDataBuf);
