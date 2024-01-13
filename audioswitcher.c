@@ -42,9 +42,8 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
 
     rtaudio_start_stream(realDeviceAudio);
     rtaudio_start_stream(virtualDeviceAudio);
-    switchDefaultAudioInputDevice(VIRTUAL_AUDIO_DEVICE_ID);
-
-    togglePlayingAudio("./audiosamples/skrillex.wav");
+    switchDefaultAudioInputDevice(VIRTUAL_AUDIO_DEVICE_INPUT_ID);
+    togglePlayingAudio("./audiosamples/Skrillex - First Of The Year (Equinox) [Official Audio].wav");
 
     // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)
     while (1) {

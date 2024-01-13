@@ -24,24 +24,30 @@ void listDevices() {
 }
 
 _Bool selectMicAndAudioDevices() {
-    char micSelectedId[8] = { 0 }, headphonesSelectedId[8] = { 0 }, virtualMicSelectedId[8] = { 0 };
-    char *micName = NULL, *vacName = NULL, *headphonesName = NULL;
+    char micSelectedId[8] = { 0 }, headphonesSelectedId[8] = { 0 }, virtualMicOutputSelectedId[8] = { 0 }, virtualMicInputSelectedId[8] = { 0 };
+    char *micName = NULL, *vacOutputName = NULL, *headphonesName = NULL, *vacInputName = NULL;
     listDevices();
 
     printf("Choose your real microphone device's number from the list: ");
     fgets(micSelectedId, sizeof(micSelectedId), stdin);
-    printf("Choose your virtual microphone device's number from the list: ");
-    fgets(virtualMicSelectedId, sizeof(virtualMicSelectedId), stdin);
     printf("Choose your headphone device's number from the list: ");
     fgets(headphonesSelectedId, sizeof(headphonesSelectedId), stdin);
+    printf("Choose your virtual microphone device's number from the list (has output channels): ");
+    fgets(virtualMicOutputSelectedId, sizeof(virtualMicOutputSelectedId), stdin);
+    printf("Choose your virtual microphone device's number from the list (has input channels): ");
+    fgets(virtualMicInputSelectedId, sizeof(virtualMicInputSelectedId), stdin);
+    
     int micId = atoi(micSelectedId);
-    int virtualMicId = atoi(virtualMicSelectedId);
+    int virtualMicOutputId = atoi(virtualMicOutputSelectedId);
+    int virtualMicInputId = atoi(virtualMicInputSelectedId);
     int headphonesId = atoi(headphonesSelectedId);
     micName = rtaudio_get_device_info(realDeviceAudio, micId).name;
-    vacName = rtaudio_get_device_info(realDeviceAudio, virtualMicId).name;
+    vacOutputName = rtaudio_get_device_info(realDeviceAudio, virtualMicOutputId).name;
+    vacInputName = rtaudio_get_device_info(realDeviceAudio, virtualMicInputId).name;
     headphonesName = rtaudio_get_device_info(realDeviceAudio, headphonesId).name;
     //rtaudio indices are not the same as powershell's output indices
-    queryDeviceIDbyName(vacName, VIRTUAL_AUDIO_DEVICE_ID, sizeof(VIRTUAL_AUDIO_DEVICE_ID));
+    queryDeviceIDbyName(vacOutputName, VIRTUAL_AUDIO_DEVICE_OUTPUT_ID, sizeof(VIRTUAL_AUDIO_DEVICE_OUTPUT_ID));
+    queryDeviceIDbyName(vacInputName, VIRTUAL_AUDIO_DEVICE_INPUT_ID, sizeof(VIRTUAL_AUDIO_DEVICE_INPUT_ID));
     queryDeviceIDbyName(micName, AUDIO_DEVICE_ID, sizeof(AUDIO_DEVICE_ID));
     queryDeviceIDbyName(headphonesName, HEADPHONES_ID, sizeof(HEADPHONES_ID));
     rtaudio_device_info_t realMicInfo = rtaudio_get_device_info(realDeviceAudio, micId);
@@ -50,9 +56,9 @@ _Bool selectMicAndAudioDevices() {
     realMicParams.num_channels = 1; // hardcoded to only one channel
     realMicSampleRate = realMicInfo.preferred_sample_rate;
 
-    rtaudio_device_info_t virtualMicInfo = rtaudio_get_device_info(virtualDeviceAudio, virtualMicId);
+    rtaudio_device_info_t virtualMicInfo = rtaudio_get_device_info(virtualDeviceAudio, virtualMicOutputId);
     rtaudio_stream_parameters_t virtualMicParams = { 0 };
-    virtualMicParams.device_id = virtualMicId;
+    virtualMicParams.device_id = virtualMicOutputId;
     virtualMicParams.num_channels = 1;
 
     rtaudio_device_info_t headphonesInfo = rtaudio_get_device_info(realDeviceAudio, headphonesId);
@@ -70,7 +76,7 @@ _Bool selectMicAndAudioDevices() {
     // use the real mic sample rate on virtual mic too
     err = rtaudio_open_stream(virtualDeviceAudio, &virtualMicParams, NULL, RTAUDIO_FORMAT_FLOAT32, realMicInfo.preferred_sample_rate, &prefFrames, &virtualMicCallback, NULL, NULL, NULL);
     if (err > RTAUDIO_ERROR_DEBUG_WARNING) {
-        printf("Failed to open virtual microphone device with id %d due to error: %s\n", virtualMicId, rtaudio_error(virtualDeviceAudio));
+        printf("Failed to open virtual microphone device with id %d due to error: %s\n", virtualMicOutputId, rtaudio_error(virtualDeviceAudio));
         return TRUE;
     }
 
@@ -101,7 +107,7 @@ int main() {
     if (!selectMicAndAudioDevices()) return 1;
 
     startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
-
+    
     return 0;
 }
 
