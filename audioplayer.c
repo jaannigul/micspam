@@ -116,12 +116,12 @@ void playAudioThread(const char* filePath) {
 		tempAudioDataBuf = calloc((size_t)(conversionData.src_ratio * (double)info.channels * (double)info.frames), sizeof(float));
 		conversionData.data_in = audioDataBuf;
 		conversionData.data_out = tempAudioDataBuf;
-		conversionData.input_frames = info.frames;
-		conversionData.output_frames = (size_t)(conversionData.src_ratio * (double)info.frames);
+		conversionData.input_frames = info.frames * info.channels;
+		conversionData.output_frames = (size_t)(conversionData.src_ratio * (double)info.frames * (double)info.channels);
 
 		int res = src_simple(&conversionData, SRC_LINEAR, info.channels);
 		if (res != 0)
-			fprintf(stderr, "Audio player thread failed to convert sample rate, output audio can be wonky");
+			fprintf(stderr, "Audio player thread failed to convert sample rate, output audio can be wonky. Error: %s", src_strerror(res));
 
 		int newFrameCount = conversionData.output_frames_gen;
 		free(audioDataBuf);
@@ -129,7 +129,9 @@ void playAudioThread(const char* filePath) {
 		memcpy(audioDataBuf, tempAudioDataBuf, newFrameCount * sizeof(float));
 	}
 
-	if (cancellationRequest == TRUE) goto cleanup;
+	int newFrameCount = conversionData.output_frames_gen;
+
+	/*if (cancellationRequest == TRUE) goto cleanup;
 
 	int newFrameCount = conversionData.output_frames_gen;
 	free(tempAudioDataBuf);
@@ -140,13 +142,23 @@ void playAudioThread(const char* filePath) {
 	{
 		if (cancellationRequest == TRUE) goto cleanup;
 
-		for (int j = 0; j < info.channels; j++)
-			tempAudioDataBuf[i] += audioDataBuf[i * info.channels + j];
+		//for (int j = 0; j < info.channels; j++)
+			tempAudioDataBuf[i] += audioDataBuf[i * info.channels + i % info.channels];
 		tempAudioDataBuf[i] /= info.channels;
-	}
+	}*/
+
+	sf_close(file);
+	// write output
+	int frames = newFrameCount;
+	info.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
+	info.channels = 2;
+	info.samplerate = realMicSampleRate;
+	file = sf_open("./audiosamples/test.wav", SFM_WRITE, &info);
+	sf_write_float(file, tempAudioDataBuf, frames);
+	sf_close(file);
 
 	// send the data over, while periodically checking for cancel request
-	int framesLeft = newFrameCount / info.channels;
+	/*int framesLeft = newFrameCount / info.channels;
 	int framesCopied = 0;
 	while (framesLeft > 0) {
 		if (cancellationRequest == TRUE) goto cleanup;
@@ -161,7 +173,7 @@ void playAudioThread(const char* filePath) {
 
 		framesCopied++;
 		framesLeft -= BUFFER_FRAMES;
-	}
+	}*/
 
 cleanup:
 	if(audioDataBuf) free(audioDataBuf);
