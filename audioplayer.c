@@ -5,9 +5,11 @@
 #include <sndfile.h>
 #include <signal.h>
 #include <stdio.h>
+#include <time.h>
 
 pthread_t soundPlayer;
-_Bool threadShouldBeRunning = FALSE; // shitty workaround for stdatomic.h to check if our audio player thread is running
+volatile _Bool threadRunning = FALSE; // shitty workaround for stdatomic.h to check if our audio player thread is running
+volatile _Bool cancellationRequest = FALSE;
 
 BOOL directoryExists(const char* path)
 {
@@ -91,7 +93,9 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 void playAudioThread(const char* filePath) {
 	SNDFILE* file;
 	SF_INFO info;
+	float* audioDataBuf;
 
+	// read the entire sound file to memory
 	file = sf_open(filePath, SFM_READ, &info);
 	if (!file) {
 		fprintf(stderr, "Audio player thread could not open audio file: %s\n", filePath);
@@ -100,8 +104,6 @@ void playAudioThread(const char* filePath) {
 
 	// TODO: fix different sample rate wav being sent to the microphone as input
 	// this could cause distortion
-
-	float audioDataBuf[BUFFER_FRAMES];
 	sf_count_t num_read = 0;
 
 	do {
@@ -124,8 +126,11 @@ void playAudioThread(const char* filePath) {
 		StsQueue.push(virtualMicPlaybackQueue, sendBuf, MICSPAM_DATA_PRIORITY);
 	} while (num_read > 0);
 
-
-	InterlockedExchange(&threadShouldBeRunning, FALSE);
+cleanup:
+	free(audioDataBuf);
+	InterlockedExchange(&threadRunning, FALSE);
+	InterlockedExchange(&cancellationRequest, FALSE);
+	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 }
 
 // Toggles the audio playing thread, function not for multithread use
@@ -133,19 +138,25 @@ int togglePlayingAudio(const char* audioPath) {
 	if (GetFileAttributes(audioPath) == INVALID_FILE_ATTRIBUTES)
 		return PLAYER_COULDNT_FIND_AUDIO;
 
-	if (InterlockedCompareExchange(&threadShouldBeRunning, FALSE, TRUE) == TRUE) { // if thread had running state on, kill it to stop playing audio
-		StsQueue.freeAllValues(virtualMicPlaybackQueue); // free all malloced values to avoid a huge memory leak
-		StsQueue.removeAll(virtualMicPlaybackQueue);
-		
-		if (pthread_kill(soundPlayer, SIGINT) != 0) {
-			InterlockedExchange(&threadShouldBeRunning, TRUE);
+	if (InterlockedCompareExchange(&threadRunning, TRUE, TRUE) == TRUE) { // if thread had running state on, kill it to stop playing audio
+		InterlockedExchange(&cancellationRequest, TRUE);
+
+		struct timespec ts;
+		if(timespec_get(&ts, TIME_UTC) == -1)
 			return PLAYER_THREAD_FAILED_TO_KILL;
-		}
-		else
+		ts.tv_sec += 1;
+
+		if (pthread_timedjoin_np(soundPlayer, NULL, &ts) != 0)
+			return PLAYER_THREAD_FAILED_TO_KILL;
+		else {
+			StsQueue.freeAllValues(virtualMicPlaybackQueue); // free all malloced values to avoid a huge memory leak
+			StsQueue.removeAll(virtualMicPlaybackQueue);
+
 			return PLAYER_NO_ERROR;
+		}
 	}
 
-	InterlockedExchange(&threadShouldBeRunning, TRUE);
+	InterlockedExchange(&threadRunning, TRUE);
 	pthread_create(&soundPlayer, NULL, playAudioThread, audioPath);
 	pthread_join(soundPlayer, NULL);
 
