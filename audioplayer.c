@@ -1,8 +1,10 @@
 #include "audioplayer.h"
 #include "audioswitcher.h"
 #include "consts.h"
+#include "deviceIDs.h"
 
 #include <sndfile.h>
+#include <samplerate.h>
 #include <signal.h>
 #include <stdio.h>
 #include <time.h>
@@ -93,44 +95,45 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 void playAudioThread(const char* filePath) {
 	SNDFILE* file;
 	SF_INFO info;
-	float* audioDataBuf;
+	float* audioDataBuf = 0;
+	float* tempAudioDataBuf = 0;
 
 	// read the entire sound file to memory
 	file = sf_open(filePath, SFM_READ, &info);
 	if (!file) {
 		fprintf(stderr, "Audio player thread could not open audio file: %s\n", filePath);
-		return;
+		goto cleanup;
 	}
 
-	// TODO: fix different sample rate wav being sent to the microphone as input
-	// this could cause distortion
-	sf_count_t num_read = 0;
+	audioDataBuf = calloc(info.channels * info.frames, sizeof(float));
+	sf_read_float(file, audioDataBuf, info.channels * info.frames);
+	if (cancellationRequest == TRUE) goto cleanup;
 
-	do {
-		int sendBufIdx = 0; 
-		float* sendBuf = calloc(BUFFER_FRAMES, sizeof(float));
-		for (int repeat = 0; repeat < info.channels; repeat++) { // required for us to fully fill the chunk after 
-			num_read = sf_read_short(file, audioDataBuf, BUFFER_FRAMES);
-			if (num_read <= 0) break;
+	// convert sample rate to something acceptable, if needed
+	SRC_DATA conversionData = { 0 };
+	if (info.samplerate != realMicSampleRate) {
+		tempAudioDataBuf = calloc(info.channels * info.frames, sizeof(float));
+		conversionData.data_in = audioDataBuf;
+		conversionData.data_out = tempAudioDataBuf;
+		conversionData.input_frames = conversionData.output_frames = info.frames;
+		conversionData.src_ratio = realMicSampleRate / info.samplerate;
 
-			for (int i = 0; i < num_read / info.channels - info.channels; i++) {
-				//for (int j = 0; j < info.channels; j++)
-					sendBuf[sendBufIdx] += audioDataBuf[i * info.channels+1];
-				//sendBuf[sendBufIdx] /= info.channels;
-				sendBufIdx++;
-			}
-		}
+		int res = src_simple(&conversionData, SRC_LINEAR, info.channels);
+		if (res != 0)
+			fprintf(stderr, "Audio player thread failed to convert sample rate, output audio can be wonky");
 
-		// add the data to mic queue
-		// TODO: add this audio to headphone playback queue too
-		StsQueue.push(virtualMicPlaybackQueue, sendBuf, MICSPAM_DATA_PRIORITY);
-	} while (num_read > 0);
+		memcpy(audioDataBuf, tempAudioDataBuf, conversionData.output_frames_gen * info.channels);
+	}
+
+	// simplify all channels down to one
+
 
 cleanup:
-	free(audioDataBuf);
+	if(audioDataBuf) free(audioDataBuf);
+	if(tempAudioDataBuf) free(tempAudioDataBuf);
 	InterlockedExchange(&threadRunning, FALSE);
 	InterlockedExchange(&cancellationRequest, FALSE);
-	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+	pthread_exit(NULL);
 }
 
 // Toggles the audio playing thread, function not for multithread use

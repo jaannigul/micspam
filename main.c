@@ -48,6 +48,7 @@ _Bool selectMicAndAudioDevices() {
     rtaudio_stream_parameters_t realMicParams = { 0 };
     realMicParams.device_id = micId;
     realMicParams.num_channels = 1; // hardcoded to only one channel
+    realMicSampleRate = realMicInfo.preferred_sample_rate;
 
     rtaudio_device_info_t virtualMicInfo = rtaudio_get_device_info(virtualDeviceAudio, virtualMicId);
     rtaudio_stream_parameters_t virtualMicParams = { 0 };

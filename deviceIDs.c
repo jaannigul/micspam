@@ -7,6 +7,8 @@ char VIRTUAL_AUDIO_DEVICE_ID[256] = {0};
 char AUDIO_DEVICE_ID[256] = { 0 };
 char HEADPHONES_ID[256] = { 0 };
 
+double realMicSampleRate = 0.0;
+
 
 void queryDeviceIDbyName(const char* deviceName, char* deviceID, size_t size) {
     char command[256];
