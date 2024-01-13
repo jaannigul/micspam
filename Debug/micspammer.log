@@ -2,34 +2,22 @@
 C:\Users\madis\source\repos\micspam\audioplayer.c(82,23): warning C4090: 'function': different 'const' qualifiers
 C:\Users\madis\source\repos\micspam\audioplayer.c(88,24): warning C4090: 'function': different 'const' qualifiers
 C:\Users\madis\source\repos\micspam\audioplayer.c(108,38): warning C4244: 'function': conversion from 'sf_count_t' to 'size_t', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(115,43): warning C4244: 'function': conversion from 'sf_count_t' to 'size_t', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(118,68): warning C4244: '=': conversion from 'sf_count_t' to 'long', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(129,32): warning C4244: 'function': conversion from 'sf_count_t' to 'size_t', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(139,45): warning C4244: 'function': conversion from 'sf_count_t' to 'size_t', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(162,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(163,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(142,23): warning C4244: 'initializing': conversion from 'sf_count_t' to 'int', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(168,36): warning C4028: formal parameter 1 different from declaration
-C:\Users\madis\source\repos\micspam\audioplayer.c(172,33): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(173,23): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(190,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(191,52): warning C4047: 'function': 'void *(__cdecl *)(void *)' differs in levels of indirection from 'void (__cdecl *)(const char *)'
-C:\Users\madis\source\repos\micspam\audioplayer.c(191,37): warning C4022: 'pthread_create': pointer mismatch for actual parameter 3
-C:\Users\madis\source\repos\micspam\audioplayer.c(191,63): warning C4090: 'function': different 'const' qualifiers
+C:\Users\madis\source\repos\micspam\audioplayer.c(119,37): warning C4244: '=': conversion from 'sf_count_t' to 'long', possible loss of data
+C:\Users\madis\source\repos\micspam\audioplayer.c(167,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(168,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(173,36): warning C4028: formal parameter 1 different from declaration
+C:\Users\madis\source\repos\micspam\audioplayer.c(177,33): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(178,23): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(195,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(196,52): warning C4047: 'function': 'void *(__cdecl *)(void *)' differs in levels of indirection from 'void (__cdecl *)(const char *)'
+C:\Users\madis\source\repos\micspam\audioplayer.c(196,37): warning C4022: 'pthread_create': pointer mismatch for actual parameter 3
+C:\Users\madis\source\repos\micspam\audioplayer.c(196,63): warning C4090: 'function': different 'const' qualifiers
   audioswitcher.c
 C:\Users\madis\source\repos\micspam\audioswitcher.c(10,41): warning C4028: formal parameter 1 different from declaration
 C:\Users\madis\source\repos\micspam\audioswitcher.c(10,53): warning C4028: formal parameter 2 different from declaration
 C:\Users\madis\source\repos\micspam\audioswitcher.c(50,5): warning C4013: 'togglePlayingAudio' undefined; assuming extern returning int
-  deviceIDs.c
-C:\Users\madis\source\repos\micspam\deviceIDs.c(13,38): warning C4028: formal parameter 1 different from declaration
-C:\Users\madis\source\repos\micspam\deviceIDs.c(44,110): warning C4047: 'function': 'const size_t' differs in levels of indirection from 'char [81]'
-C:\Users\madis\source\repos\micspam\deviceIDs.c(44,24): warning C4024: 'sprintf_s': different types for formal and actual parameter 2
   main.c
 C:\Users\madis\source\repos\micspam\main.c(53,27): warning C4101: 'virtualMicInfo': unreferenced local variable
-  sts_queue.c
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(108,3): warning C4113: 'void (__cdecl *)(StsHeader *,void *,int)' differs in parameter lists from 'void (__cdecl *const )(StsHeader *)'
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(109,3): warning C4113: 'void *(__cdecl *)(StsHeader *)' differs in parameter lists from 'void (__cdecl *const )(StsHeader *,void *,int)'
-C:\Users\madis\source\repos\micspam\utils\queue\sts_queue.c(104,28): warning C4047: 'initializing': 'void (__cdecl *const )(StsHeader *,void *,int)' differs in levels of indirection from 'void *(__cdecl *)(StsHeader *)'
   Generating Code...
   micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
   'pwsh.exe' is not recognized as an internal or external command,

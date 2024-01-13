@@ -75,6 +75,8 @@ static void push(StsHeader* header, void* elem, int priority) {
 	}
 	else if (header->head->priority < priority) {
 		removeAll(header);
+		header->head = element;
+		header->tail = element;
 	}
 	pthread_mutex_unlock(&header->mutex);
 }
