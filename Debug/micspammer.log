@@ -3,22 +3,15 @@ C:\Users\madis\source\repos\micspam\audioplayer.c(82,23): warning C4090: 'functi
 C:\Users\madis\source\repos\micspam\audioplayer.c(88,24): warning C4090: 'function': different 'const' qualifiers
 C:\Users\madis\source\repos\micspam\audioplayer.c(108,38): warning C4244: 'function': conversion from 'sf_count_t' to 'size_t', possible loss of data
 C:\Users\madis\source\repos\micspam\audioplayer.c(119,37): warning C4244: '=': conversion from 'sf_count_t' to 'long', possible loss of data
-C:\Users\madis\source\repos\micspam\audioplayer.c(167,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(168,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(173,36): warning C4028: formal parameter 1 different from declaration
-C:\Users\madis\source\repos\micspam\audioplayer.c(177,33): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(178,23): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(195,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
-C:\Users\madis\source\repos\micspam\audioplayer.c(196,52): warning C4047: 'function': 'void *(__cdecl *)(void *)' differs in levels of indirection from 'void (__cdecl *)(const char *)'
-C:\Users\madis\source\repos\micspam\audioplayer.c(196,37): warning C4022: 'pthread_create': pointer mismatch for actual parameter 3
-C:\Users\madis\source\repos\micspam\audioplayer.c(196,63): warning C4090: 'function': different 'const' qualifiers
-  audioswitcher.c
-C:\Users\madis\source\repos\micspam\audioswitcher.c(10,41): warning C4028: formal parameter 1 different from declaration
-C:\Users\madis\source\repos\micspam\audioswitcher.c(10,53): warning C4028: formal parameter 2 different from declaration
-C:\Users\madis\source\repos\micspam\audioswitcher.c(50,5): warning C4013: 'togglePlayingAudio' undefined; assuming extern returning int
-  main.c
-C:\Users\madis\source\repos\micspam\main.c(53,27): warning C4101: 'virtualMicInfo': unreferenced local variable
-  Generating Code...
+C:\Users\madis\source\repos\micspam\audioplayer.c(170,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(171,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(176,36): warning C4028: formal parameter 1 different from declaration
+C:\Users\madis\source\repos\micspam\audioplayer.c(180,33): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(181,23): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(198,22): warning C4133: 'function': incompatible types - from 'volatile bool *' to 'volatile LONG *'
+C:\Users\madis\source\repos\micspam\audioplayer.c(199,52): warning C4047: 'function': 'void *(__cdecl *)(void *)' differs in levels of indirection from 'void (__cdecl *)(const char *)'
+C:\Users\madis\source\repos\micspam\audioplayer.c(199,37): warning C4022: 'pthread_create': pointer mismatch for actual parameter 3
+C:\Users\madis\source\repos\micspam\audioplayer.c(199,63): warning C4090: 'function': different 'const' qualifiers
   micspammer.vcxproj -> C:\Users\madis\source\repos\micspam\Debug\micspammer.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

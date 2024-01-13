@@ -122,29 +122,31 @@ void playAudioThread(const char* filePath) {
 		int res = src_simple(&conversionData, SRC_LINEAR, info.channels);
 		if (res != 0)
 			fprintf(stderr, "Audio player thread failed to convert sample rate, output audio can be wonky");
+
+		int newFrameCount = conversionData.output_frames_gen;
+		free(audioDataBuf);
+		audioDataBuf = calloc(newFrameCount, sizeof(float));
+		memcpy(audioDataBuf, tempAudioDataBuf, newFrameCount * sizeof(float));
 	}
 
 	if (cancellationRequest == TRUE) goto cleanup;
+
 	int newFrameCount = conversionData.output_frames_gen;
-
-	free(audioDataBuf);
-	audioDataBuf = calloc(newFrameCount, sizeof(float));
-	memcpy(audioDataBuf, tempAudioDataBuf, newFrameCount * sizeof(float));
-
 	free(tempAudioDataBuf);
-	tempAudioDataBuf = calloc(newFrameCount, sizeof(float));
+	tempAudioDataBuf = calloc(newFrameCount / info.channels, sizeof(float));
 
 	// simplify all channels down to one
 	for (int i = 0; i < newFrameCount / info.channels; i++)
 	{
+		if (cancellationRequest == TRUE) goto cleanup;
+
 		for (int j = 0; j < info.channels; j++)
 			tempAudioDataBuf[i] += audioDataBuf[i * info.channels + j];
 		tempAudioDataBuf[i] /= info.channels;
 	}
-	//memcpy(audioDataBuf, tempAudioDataBuf, newFrameCount);
 
 	// send the data over, while periodically checking for cancel request
-	int framesLeft = newFrameCount;
+	int framesLeft = newFrameCount / info.channels;
 	int framesCopied = 0;
 	while (framesLeft > 0) {
 		if (cancellationRequest == TRUE) goto cleanup;
