@@ -106,49 +106,56 @@ void playAudioThread(const char* filePath) {
 	}
 
 	audioDataBuf = calloc(info.channels * info.frames, sizeof(float));
-	sf_read_float(file, audioDataBuf, info.channels * info.frames);
+	sf_read_float(file, audioDataBuf, info.channels*info.frames);
 	if (cancellationRequest == TRUE) goto cleanup;
 
 	// convert sample rate to something acceptable, if needed
 	SRC_DATA conversionData = { 0 };
 	if (info.samplerate != realMicSampleRate) {
-		tempAudioDataBuf = calloc(info.channels * info.frames, sizeof(float));
+		conversionData.src_ratio = realMicSampleRate / info.samplerate;
+		tempAudioDataBuf = calloc((size_t)(conversionData.src_ratio * (double)info.channels * (double)info.frames), sizeof(float));
 		conversionData.data_in = audioDataBuf;
 		conversionData.data_out = tempAudioDataBuf;
-		conversionData.input_frames = conversionData.output_frames = info.frames;
-		conversionData.src_ratio = realMicSampleRate / info.samplerate;
+		conversionData.input_frames = info.frames;
+		conversionData.output_frames = (size_t)(conversionData.src_ratio * (double)info.frames);
 
 		int res = src_simple(&conversionData, SRC_LINEAR, info.channels);
 		if (res != 0)
 			fprintf(stderr, "Audio player thread failed to convert sample rate, output audio can be wonky");
 
-		memcpy(audioDataBuf, tempAudioDataBuf, conversionData.output_frames_gen * info.channels);
-		free(tempAudioDataBuf);
+		int newFrameCount = conversionData.output_frames_gen;
+		free(audioDataBuf);
+		audioDataBuf = calloc(newFrameCount, sizeof(float));
+		memcpy(audioDataBuf, tempAudioDataBuf, newFrameCount * sizeof(float));
 	}
 
-	tempAudioDataBuf = calloc(info.frames, sizeof(float));
 	if (cancellationRequest == TRUE) goto cleanup;
 
+	int newFrameCount = conversionData.output_frames_gen;
+	free(tempAudioDataBuf);
+	tempAudioDataBuf = calloc(newFrameCount / info.channels, sizeof(float));
+
 	// simplify all channels down to one
-	for (int i = 0; i < info.frames; i++)
+	for (int i = 0; i < newFrameCount / info.channels; i++)
 	{
+		if (cancellationRequest == TRUE) goto cleanup;
+
 		for (int j = 0; j < info.channels; j++)
 			tempAudioDataBuf[i] += audioDataBuf[i * info.channels + j];
 		tempAudioDataBuf[i] /= info.channels;
 	}
-	memcpy(audioDataBuf, tempAudioDataBuf, info.frames);
 
 	// send the data over, while periodically checking for cancel request
-	int framesLeft = info.frames;
+	int framesLeft = newFrameCount / info.channels;
 	int framesCopied = 0;
 	while (framesLeft > 0) {
 		if (cancellationRequest == TRUE) goto cleanup;
 
 		float* buf = calloc(BUFFER_FRAMES, sizeof(float));
 		if (framesLeft >= BUFFER_FRAMES)
-			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, BUFFER_FRAMES);
+			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, BUFFER_FRAMES*sizeof(float));
 		else
-			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, framesLeft);
+			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, framesLeft * sizeof(float));
 
 		StsQueue.push(virtualMicPlaybackQueue, buf, MICSPAM_DATA_PRIORITY);
 
