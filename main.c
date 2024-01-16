@@ -116,12 +116,12 @@ int main() {
     * list - list all audio files in audiosamples
     * 
     */
+
     int numFiles = countFilesInDirectory(USER_AUDIO_FILES_PATH_WILDCARD);
     char** fileList = allocateFileList(numFiles);
     int i = getUserAudioFiles(USER_AUDIO_FILES_PATH_WILDCARD, fileList);
-    printf("numfiles %d\ni: %d\n", numFiles,i);
     for (int index = 0; index < i; index++) {
-        printf("%d. %s", i, fileList[i]);
+        printf("%d. %s\n", index, fileList[index]);
     }
     startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
     
