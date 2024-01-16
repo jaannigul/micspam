@@ -84,6 +84,8 @@ _Bool selectMicAndAudioDevices() {
 }
 
 int main() {
+    int c = countFilesInDirectory(USER_AUDIO_FILES_PATH_WILDCARD);
+
     realDeviceAudio = rtaudio_create(RTAUDIO_API_WINDOWS_WASAPI);
     if (!realDeviceAudio) {
         printf("Error creating RtAudio instance for physical devices: %s\n", rtaudio_error(realDeviceAudio));

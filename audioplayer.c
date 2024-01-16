@@ -42,8 +42,8 @@ _Bool isAllowedAudioFile(const char* filename) {
 }
 
 _Bool setupAudioPlayer() {
-	if (!directoryExists(USER_AUDIO_FILES_PATH))
-		if (CreateDirectory(USER_AUDIO_FILES_PATH, NULL) == 0)
+	if (!directoryExists(USER_AUDIO_FILES_PATH_WILDCARD))
+		if (CreateDirectory(USER_AUDIO_FILES_PATH_WILDCARD, NULL) == 0)
 			return FALSE;
 
 	return TRUE;
@@ -55,16 +55,17 @@ int countFilesInDirectory(const char* path) {
 	WIN32_FIND_DATA fileData;
 	int filesTotal = 0;
 
-	HANDLE hFile = FindFirstFile(TEXT(USER_AUDIO_FILES_PATH), &fileData);
+	HANDLE hFile = FindFirstFile(TEXT(USER_AUDIO_FILES_PATH_WILDCARD), &fileData);
 	if (hFile == INVALID_HANDLE_VALUE)
 		return filesTotal;
 
-	if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0)
+	if ((fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
 		filesTotal++;
 
-	while (FindNextFile(hFile, &fileData) != 0)
-		if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0)
+	while (FindNextFile(hFile, &fileData) != 0) {
+		if ((fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
 			filesTotal++;
+	}
 
 	return filesTotal;
 }
@@ -74,17 +75,17 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 	int i = 0;
 	WIN32_FIND_DATA fileData;
 
-	HANDLE hFile = FindFirstFile(TEXT(USER_AUDIO_FILES_PATH), &fileData);
+	HANDLE hFile = FindFirstFile(TEXT(USER_AUDIO_FILES_PATH_WILDCARD), &fileData);
 	if (hFile == INVALID_HANDLE_VALUE)
 		return 0;
 
-	if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0 && isAllowedAudioFile(fileData.cFileName)) {
+	if ((fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 && isAllowedAudioFile(fileData.cFileName)) {
 		strcpy_s(fileList[i], MAX_PATH, fileData.cFileName);
 		i++;
 	}
 
 	while (FindNextFile(hFile, &fileData) != 0)
-		if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0 && isAllowedAudioFile(fileData.cFileName)) {
+		if ((fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 && isAllowedAudioFile(fileData.cFileName)) {
 			strcpy_s(fileList[i], MAX_PATH, fileData.cFileName);
 			i++;
 		}
