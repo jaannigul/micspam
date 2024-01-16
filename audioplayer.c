@@ -93,6 +93,15 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 	return i;
 }
 
+char** allocateFileList(int numFiles) {
+	char** fileList = malloc(numFiles * sizeof(char*));
+	for (int i = 0; i < numFiles; i++) {
+		fileList[i] = malloc(MAX_PATH * sizeof(char));
+	}
+	return fileList;
+}
+
+
 void playAudioThread(const char* filePath) {
 	SNDFILE* file;
 	SF_INFO info;
@@ -174,6 +183,11 @@ cleanup:
 	pthread_exit(NULL);
 }
 
+const char* getFileName(const char* filePath) {
+	const char* lastBackslash = strrchr(filePath, '\\');
+	return lastBackslash ? lastBackslash + 1 : filePath;
+}
+
 // Toggles the audio playing thread, function not for multithread use
 int togglePlayingAudio(const char* audioPath) {
 	if (GetFileAttributes(audioPath) == INVALID_FILE_ATTRIBUTES)
@@ -200,6 +214,6 @@ int togglePlayingAudio(const char* audioPath) {
 	InterlockedExchange(&threadRunning, TRUE);
 	pthread_create(&soundPlayer, NULL, playAudioThread, audioPath);
 	pthread_join(soundPlayer, NULL);
-
+	printf("Now playing: %s", getFileName(audioPath));
 	return PLAYER_NO_ERROR;
 }
