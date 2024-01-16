@@ -43,7 +43,7 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
     rtaudio_start_stream(realDeviceAudio);
     rtaudio_start_stream(virtualDeviceAudio);
     switchDefaultAudioInputDevice(VIRTUAL_AUDIO_DEVICE_INPUT_ID);
-    togglePlayingAudio("./audiosamples/skrillex.wav");
+    togglePlayingAudio("./audiosamples/heads_down_6.mp3");
 
     // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)
     while (1) {

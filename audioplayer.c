@@ -79,13 +79,13 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 		return 0;
 
 	if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0 && isAllowedAudioFile(fileData.cFileName)) {
-		strcpy_s(fileList[i], sizeof(fileList[i]), fileData.cFileName);
+		strcpy_s(fileList[i], MAX_PATH, fileData.cFileName);
 		i++;
 	}
 
 	while (FindNextFile(hFile, &fileData) != 0)
 		if ((GetFileAttributes(fileData.cFileName) & FILE_ATTRIBUTE_DIRECTORY) == 0 && isAllowedAudioFile(fileData.cFileName)) {
-			strcpy_s(fileList[i], sizeof(fileList[i]), fileData.cFileName);
+			strcpy_s(fileList[i], MAX_PATH, fileData.cFileName);
 			i++;
 		}
 
