@@ -42,8 +42,8 @@ _Bool isAllowedAudioFile(const char* filename) {
 }
 
 _Bool setupAudioPlayer() {
-	if (!directoryExists(USER_AUDIO_FILES_PATH_WILDCARD))
-		if (CreateDirectory(USER_AUDIO_FILES_PATH_WILDCARD, NULL) == 0)
+	if (!directoryExists(USER_AUDIO_FILES_PATH))
+		if (CreateDirectory(USER_AUDIO_FILES_PATH, NULL) == 0)
 			return FALSE;
 
 	return TRUE;
