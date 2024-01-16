@@ -14,6 +14,7 @@
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
 
+
 void listDevices() {
     int devices = rtaudio_device_count(realDeviceAudio);
     for (int i = 0; i < devices; i++) {
@@ -46,10 +47,10 @@ _Bool selectMicAndAudioDevices() {
     vacInputName = rtaudio_get_device_info(realDeviceAudio, virtualMicInputId).name;
     headphonesName = rtaudio_get_device_info(realDeviceAudio, headphonesId).name;
     //rtaudio indices are not the same as powershell's output indices
-    queryDeviceIDbyName(vacOutputName, VIRTUAL_AUDIO_DEVICE_OUTPUT_ID, sizeof(VIRTUAL_AUDIO_DEVICE_OUTPUT_ID));
+    //queryDeviceIDbyName(vacOutputName, VIRTUAL_AUDIO_DEVICE_OUTPUT_ID, sizeof(VIRTUAL_AUDIO_DEVICE_OUTPUT_ID));
     queryDeviceIDbyName(vacInputName, VIRTUAL_AUDIO_DEVICE_INPUT_ID, sizeof(VIRTUAL_AUDIO_DEVICE_INPUT_ID));
     queryDeviceIDbyName(micName, AUDIO_DEVICE_ID, sizeof(AUDIO_DEVICE_ID));
-    queryDeviceIDbyName(headphonesName, HEADPHONES_ID, sizeof(HEADPHONES_ID));
+    //queryDeviceIDbyName(headphonesName, HEADPHONES_ID, sizeof(HEADPHONES_ID));
     rtaudio_device_info_t realMicInfo = rtaudio_get_device_info(realDeviceAudio, micId);
     rtaudio_stream_parameters_t realMicParams = { 0 };
     realMicParams.device_id = micId;
@@ -83,6 +84,8 @@ _Bool selectMicAndAudioDevices() {
     return TRUE;
 }
 
+
+
 int main() {
     realDeviceAudio = rtaudio_create(RTAUDIO_API_WINDOWS_WASAPI);
     if (!realDeviceAudio) {
@@ -99,13 +102,25 @@ int main() {
     }
 
     if (!setupAudioPlayer()) {
-        printf("Error setting up the audio player to asyncronously play custom audio.\n");
+        printf("Error setting up the audio player to asynchronously play custom audio.\n");
 
         return 1;
     }
 
     if (!selectMicAndAudioDevices()) return 1;
 
+    //main input from user
+    /*
+    * list - list all audio files in audiosamples
+    * 
+    */
+    int numFiles = countFilesInDirectory(USER_AUDIO_FILES_PATH);
+    char** fileList = allocateFileList(numFiles);
+    int i = getUserAudioFiles(USER_AUDIO_FILES_PATH, fileList);
+    printf("numfiles %d\ni: %d\n", numFiles,i);
+    for (int index = 0; index < i; index++) {
+        printf("%d. %s", i, fileList[i]);
+    }
     startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
     
     return 0;

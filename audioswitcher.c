@@ -1,6 +1,6 @@
 #include "audioswitcher.h"
 #include "consts.h"
-
+#include <string.h>
 #include <stdio.h>
 #include <Windows.h>
 #include "deviceIDs.h"
@@ -33,6 +33,8 @@ int virtualMicCallback(float* out, float* in, unsigned int nFrames,
     return 0;
 }
 
+
+
 void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio) {
     virtualMicPlaybackQueue = StsQueue.create();
     if (virtualMicPlaybackQueue == NULL) {
@@ -43,7 +45,7 @@ void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio
     rtaudio_start_stream(realDeviceAudio);
     rtaudio_start_stream(virtualDeviceAudio);
     switchDefaultAudioInputDevice(VIRTUAL_AUDIO_DEVICE_INPUT_ID);
-    togglePlayingAudio("./audiosamples/skrillex.wav");
+    togglePlayingAudio(".\\audiosamples\\skrillex.wav");
 
     // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)
     while (1) {
