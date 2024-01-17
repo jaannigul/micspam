@@ -54,5 +54,6 @@
     <None Include=".gitignore" />
     <None Include=".gitattributes" />
     <None Include="listDevices.ps1" />
+    <None Include="readme.md" />
   </ItemGroup>
 </Project>

@@ -13,7 +13,8 @@
 
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
-
+char** fileList;
+int numFiles;
 
 void listDevices() {
     int devices = rtaudio_device_count(realDeviceAudio);
@@ -84,10 +85,25 @@ _Bool selectMicAndAudioDevices() {
     return TRUE;
 }
 
+void takeUserInput() {
+    // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)
+    while (1) {
+        //if(GetAsyncKeyState()) break;
+        Sleep(1);
+    }
+}
+
+void printFileList() {
+    printf("////////////////////////////////////////////////////\n");
+    for (int index = 0; index < numFiles; index++) {
+        printf("%d. %s\n", index, fileList[index]);
+    }
+    printf("////////////////////////////////////////////////////\n");
+}
+
 
 
 int main() {
-    int c = countFilesInDirectory(USER_AUDIO_FILES_PATH_WILDCARD);
 
     realDeviceAudio = rtaudio_create(RTAUDIO_API_WINDOWS_WASAPI);
     if (!realDeviceAudio) {
@@ -117,14 +133,16 @@ int main() {
     * 
     */
 
-    int numFiles = countFilesInDirectory(USER_AUDIO_FILES_PATH_WILDCARD);
-    char** fileList = allocateFileList(numFiles);
-    int i = getUserAudioFiles(USER_AUDIO_FILES_PATH_WILDCARD, fileList);
-    for (int index = 0; index < i; index++) {
-        printf("%d. %s\n", index, fileList[index]);
-    }
+    numFiles = countFilesInDirectory(USER_AUDIO_FILES_PATH_WILDCARD);
+    fileList = allocateFileList(numFiles);
+    numFiles = getUserAudioFiles(USER_AUDIO_FILES_PATH_WILDCARD, fileList);
+    printFileList();
+    char audioFileIndexSelected[8] = { 0 };
+    fgets(audioFileIndexSelected,sizeof(audioFileIndexSelected),stdin);
+    int audioFileIndex = atoi(audioFileIndexSelected);
     startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
-    
+    loadAudioFile(fileList[audioFileIndex]);
+    togglePlayingAudio(fileList[audioFileIndex]);
     return 0;
 }
 

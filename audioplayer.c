@@ -13,6 +13,12 @@ pthread_t soundPlayer;
 volatile _Bool threadRunning = FALSE; // shitty workaround for stdatomic.h to check if our audio player thread is running
 volatile _Bool cancellationRequest = FALSE;
 
+SRC_DATA conversionData = { 0 };
+int newFrameCount = 0;
+SF_INFO info;
+float* audioDataBuf = 0;
+float* tempAudioDataBuf = 0;
+
 BOOL directoryExists(const char* path)
 {
 	DWORD dwAttrib = GetFileAttributes(path);
@@ -86,7 +92,7 @@ int getUserAudioFiles(const char* path, OUT const char** fileList) {
 
 	while (FindNextFile(hFile, &fileData) != 0)
 		if ((fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0 && isAllowedAudioFile(fileData.cFileName)) {
-			strcpy_s(fileList[i], MAX_PATH, fileData.cFileName);
+			sprintf_s(fileList[i], MAX_PATH, "%s\\%s", USER_AUDIO_FILES_PATH, fileData.cFileName);
 			i++;
 		}
 
@@ -101,13 +107,10 @@ char** allocateFileList(int numFiles) {
 	return fileList;
 }
 
-
-void playAudioThread(const char* filePath) {
+void loadAudioFile(const char* filePath){
+	printf("path : %s\n", filePath);
+	
 	SNDFILE* file;
-	SF_INFO info;
-	float* audioDataBuf = 0;
-	float* tempAudioDataBuf = 0;
-
 	// read the entire sound file to memory
 	file = sf_open(filePath, SFM_READ, &info);
 	if (!file) {
@@ -116,11 +119,11 @@ void playAudioThread(const char* filePath) {
 	}
 
 	audioDataBuf = calloc(info.channels * info.frames, sizeof(float));
-	sf_read_float(file, audioDataBuf, info.channels*info.frames);
+	sf_read_float(file, audioDataBuf, info.channels * info.frames);
 	if (cancellationRequest == TRUE) goto cleanup;
 
 	// convert sample rate to something acceptable, if needed
-	SRC_DATA conversionData = { 0 };
+
 	if (info.samplerate != realMicSampleRate) {
 		conversionData.src_ratio = realMicSampleRate / info.samplerate;
 		tempAudioDataBuf = calloc((size_t)(conversionData.src_ratio * (double)info.channels * (double)info.frames), sizeof(float));
@@ -156,7 +159,19 @@ void playAudioThread(const char* filePath) {
 			tempAudioDataBuf[i] += audioDataBuf[i * info.channels + j];
 		tempAudioDataBuf[i] /= info.channels;
 	}
+	printf("Loaded %s\n", filePath);
+cleanup:
+	if (audioDataBuf) free(audioDataBuf);
+	if (tempAudioDataBuf) free(tempAudioDataBuf);
+	InterlockedExchange(&threadRunning, FALSE);
+	InterlockedExchange(&cancellationRequest, FALSE);
+	pthread_exit(NULL);
+}
 
+
+//play the loaded audio file
+void playAudioThread() {
+	printf("Playing audio\n");
 	// send the data over, while periodically checking for cancel request
 	int framesLeft = newFrameCount / info.channels;
 	int framesCopied = 0;
@@ -212,8 +227,8 @@ int togglePlayingAudio(const char* audioPath) {
 	}
 
 	InterlockedExchange(&threadRunning, TRUE);
-	pthread_create(&soundPlayer, NULL, playAudioThread, audioPath);
+	pthread_create(&soundPlayer, NULL, playAudioThread,NULL);
 	pthread_join(soundPlayer, NULL);
-	printf("Now playing: %s", getFileName(audioPath));
+	//printf("Loaded file: %s\n", getFileName(audioPath));
 	return PLAYER_NO_ERROR;
 }
