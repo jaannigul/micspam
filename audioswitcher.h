@@ -3,6 +3,7 @@
 #include "utils/queue/sts_queue.h"
 
 extern StsHeader* virtualMicPlaybackQueue;
+extern StsHeader* headphonesPlaybackQueue;
 
 int virtualMicCallback(void* out, void* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,

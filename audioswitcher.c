@@ -6,6 +6,7 @@
 #include "deviceIDs.h"
 
 StsHeader* virtualMicPlaybackQueue = NULL;
+StsHeader* headphonesPlaybackQueue = NULL;
 
 int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
@@ -15,6 +16,7 @@ int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
     if (forwardData) {
         memcpy(forwardData, in, BUFFER_FRAMES*sizeof(float));
         StsQueue.push(virtualMicPlaybackQueue, forwardData, REAL_MIC_DATA_PRIORITY);
+        StsQueue.push(headphonesPlaybackQueue, forwardData, REAL_MIC_DATA_PRIORITY);
     }
 
     return 0;
@@ -35,8 +37,11 @@ int virtualMicCallback(float* out, float* in, unsigned int nFrames,
 
 
 
+
+
 void startSwitchingAudio(rtaudio_t realDeviceAudio, rtaudio_t virtualDeviceAudio) {
     virtualMicPlaybackQueue = StsQueue.create();
+    headphonesPlaybackQueue = StsQueue.create();
     if (virtualMicPlaybackQueue == NULL) {
         printf("Failed to create audio playback queue to send audio from real mic to virtual mic.\n");
         return;

@@ -137,16 +137,32 @@ int main() {
     fileList = allocateFileList(numFiles);
     numFiles = getUserAudioFiles(USER_AUDIO_FILES_PATH_WILDCARD, fileList);
     printFileList();
-    char audioFileIndexSelected[8] = { 0 };
-    fgets(audioFileIndexSelected,sizeof(audioFileIndexSelected),stdin);
-    int audioFileIndex = atoi(audioFileIndexSelected);
     startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
-    loadAudioFile(fileList[audioFileIndex]);
-    togglePlayingAudio(fileList[audioFileIndex]);
-
+    char command[16] = { 0 };
     while (1) {
+        printf("Command: ");
+        fgets(command, sizeof(command), stdin);
+        command[strcspn(command, "\n")] = 0;
 
+        if (isdigit(command[0])) { // choose audio file via index
+            int audioFileIndex = atoi(command);
+            loadAudioFile(fileList[audioFileIndex]);
+            togglePlayingAudio(fileList[audioFileIndex]);
+        }
+        else if (strcmp(command, "exit") == 0) { // exit
+            switchDefaultAudioInputDevice(AUDIO_DEVICE_ID);
+            break;
+        }
+        else if (strcmp(command, "list") == 0) {
+            printFileList();
+            continue;
+        }
+        else if (strstr(command, "volume") != NULL) {
+            printf("Setting current volume to\n"); //todo
+            continue;
+        }
     }
+
 
     return 0;
 }

@@ -173,6 +173,7 @@ void playAudioThread() {
 			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, framesLeft * sizeof(float));
 
 		StsQueue.push(virtualMicPlaybackQueue, buf, MICSPAM_DATA_PRIORITY);
+		StsQueue.push(headphonesPlaybackQueue, buf, MICSPAM_DATA_PRIORITY);
 
 		framesCopied++;
 		framesLeft -= BUFFER_FRAMES;
@@ -216,6 +217,5 @@ int togglePlayingAudio(const char* audioPath) {
 
 	InterlockedExchange(&threadRunning, TRUE);
 	pthread_create(&soundPlayer, NULL, playAudioThread,NULL);
-	//printf("Loaded file: %s\n", getFileName(audioPath));
 	return PLAYER_NO_ERROR;
 }
