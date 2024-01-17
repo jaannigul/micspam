@@ -5,6 +5,7 @@
 typedef struct StsElement {
 	void* next;
 	void* value;
+	_Bool isMalloced;
 	int priority;
 } StsElement;
 
@@ -28,22 +29,13 @@ static void removeAll(StsHeader* header) {
 	StsElement* el = header->head;
 	while (el != NULL) {
 		StsElement* next = el->next;
+		
+		if (el->isMalloced)
+			free(el->value);
+
 		free(el);
 		el = next;
 	}
-}
-
-static void freeAllValues(StsHeader* header) {
-	pthread_mutex_lock(&header->mutex);
-
-	StsElement* el = header->head;
-	while (el != NULL) {
-		StsElement* next = el->next;
-		free(el->value);
-		el = next;
-	}
-
-	pthread_mutex_unlock(&header->mutex);
 }
 
 static void destroy(StsHeader* header) {
@@ -53,10 +45,11 @@ static void destroy(StsHeader* header) {
 	header = NULL;
 }
 
-static void push(StsHeader* header, void* elem, int priority) {
+static void push(StsHeader* header, void* elem, int priority, _Bool isElemMalloced) {
 	// Create new element
 	StsElement* element = malloc(sizeof(StsElement));
 	element->value = elem;
+	element->isMalloced = isElemMalloced;
 	element->priority = priority;
 	element->next = NULL;
 
@@ -107,7 +100,6 @@ _StsQueue const StsQueue = {
   create,
   destroy,
   removeAll,
-  freeAllValues,
   push,
   pop
 };

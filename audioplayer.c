@@ -167,13 +167,18 @@ void playAudioThread() {
 		if (cancellationRequest == TRUE) goto cleanup;
 
 		float* buf = calloc(BUFFER_FRAMES, sizeof(float));
-		if (framesLeft >= BUFFER_FRAMES)
-			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, BUFFER_FRAMES*sizeof(float));
-		else
+		float* buf2 = calloc(BUFFER_FRAMES, sizeof(float));
+		if (framesLeft >= BUFFER_FRAMES) {
+			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, BUFFER_FRAMES * sizeof(float));
+			memcpy(buf2, buf, BUFFER_FRAMES * sizeof(float));
+		}
+		else {
 			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, framesLeft * sizeof(float));
+			memcpy(buf2, buf, framesLeft * sizeof(float));
+		}
 
 		StsQueue.push(virtualMicPlaybackQueue, buf, MICSPAM_DATA_PRIORITY);
-		StsQueue.push(headphonesPlaybackQueue, buf, MICSPAM_DATA_PRIORITY);
+		StsQueue.push(headphonesPlaybackQueue, buf2, MICSPAM_DATA_PRIORITY);
 
 		framesCopied++;
 		framesLeft -= BUFFER_FRAMES;
