@@ -168,6 +168,9 @@ void playAudioThread() {
 
 		float* buf = calloc(BUFFER_FRAMES, sizeof(float));
 		float* buf2 = calloc(BUFFER_FRAMES, sizeof(float));
+		if (!buf || !buf2)
+			continue; // try as long as thread is allowed to run
+
 		if (framesLeft >= BUFFER_FRAMES) {
 			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, BUFFER_FRAMES * sizeof(float));
 			memcpy(buf2, buf, BUFFER_FRAMES * sizeof(float));

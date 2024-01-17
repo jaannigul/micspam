@@ -10,7 +10,7 @@ StsHeader* headphonesPlaybackQueue = NULL;
 
 int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
-    void* userdata) {
+    int* headphoneChannelCount) { // userdata: int* headphoneChannelCount
 
     float* forwardData = calloc(BUFFER_FRAMES, sizeof(float));
     float* playbackDataHeadphones = StsQueue.pop(headphonesPlaybackQueue);
@@ -19,7 +19,13 @@ int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
         StsQueue.push(virtualMicPlaybackQueue, forwardData, REAL_MIC_DATA_PRIORITY, TRUE);
     }
     if (playbackDataHeadphones) {
-        memcpy(out, playbackDataHeadphones, BUFFER_FRAMES * sizeof(float));
+        int channels = *headphoneChannelCount;
+
+        // 1 to N channel conversion, since our playback data is mono
+        for (int i = 0; i < BUFFER_FRAMES; i++)
+            for (int chnl = 0; chnl < channels; chnl++)
+                *(out + i * channels + chnl) = *(playbackDataHeadphones + i);
+
         free(playbackDataHeadphones); // as we malloced it, we have to free this data
 
     }

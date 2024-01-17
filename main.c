@@ -15,6 +15,7 @@ rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
 char** fileList;
 int numFiles;
+int headphoneChannelCount = 1;
 
 void listDevices() {
     int devices = rtaudio_device_count(realDeviceAudio);
@@ -56,6 +57,7 @@ _Bool selectMicAndAudioDevices() {
     rtaudio_stream_parameters_t realMicParams = { 0 };
     realMicParams.device_id = micId;
     realMicParams.num_channels = 1; // hardcoded to only one channel
+
     realMicSampleRate = realMicInfo.preferred_sample_rate;
 
     rtaudio_device_info_t virtualMicInfo = rtaudio_get_device_info(virtualDeviceAudio, virtualMicOutputId);
@@ -68,8 +70,10 @@ _Bool selectMicAndAudioDevices() {
     headphoneParams.device_id = headphonesId;
     headphoneParams.num_channels = headphonesInfo.output_channels;
 
+    headphoneChannelCount = headphonesInfo.output_channels;
+
     int prefFrames = BUFFER_FRAMES;
-    int err = rtaudio_open_stream(realDeviceAudio, &headphoneParams, &realMicParams, RTAUDIO_FORMAT_FLOAT32, realMicInfo.preferred_sample_rate, &prefFrames, &realMicAndHeadphonesCallback, NULL, NULL, NULL);
+    int err = rtaudio_open_stream(realDeviceAudio, &headphoneParams, &realMicParams, RTAUDIO_FORMAT_FLOAT32, realMicInfo.preferred_sample_rate, &prefFrames, &realMicAndHeadphonesCallback, &headphoneChannelCount, NULL, NULL);
     if (err > RTAUDIO_ERROR_DEBUG_WARNING) {
         printf("Failed to open microphone or headphone device due to error: %s\n", rtaudio_error(realDeviceAudio));
         return FALSE;
