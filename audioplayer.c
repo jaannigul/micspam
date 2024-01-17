@@ -213,8 +213,8 @@ int togglePlayingAudio(const char* audioPath) {
 		if (pthread_timedjoin_np(soundPlayer, NULL, &ts) != 0)
 			return PLAYER_THREAD_FAILED_TO_KILL;
 		else {
-			StsQueue.freeAllValues(virtualMicPlaybackQueue); // free all malloced values to avoid a huge memory leak
 			StsQueue.removeAll(virtualMicPlaybackQueue);
+			StsQueue.removeAll(headphonesPlaybackQueue);
 
 			return PLAYER_NO_ERROR;
 		}
