@@ -107,20 +107,19 @@ char** allocateFileList(int numFiles) {
 	return fileList;
 }
 
-void loadAudioFile(const char* filePath){
+void loadAudioFile(const char* filePath) {
 	printf("path : %s\n", filePath);
-	
+
 	SNDFILE* file;
 	// read the entire sound file to memory
 	file = sf_open(filePath, SFM_READ, &info);
 	if (!file) {
 		fprintf(stderr, "Audio player thread could not open audio file: %s\n", filePath);
-		goto cleanup;
+		return;
 	}
 
 	audioDataBuf = calloc(info.channels * info.frames, sizeof(float));
 	sf_read_float(file, audioDataBuf, info.channels * info.frames);
-	if (cancellationRequest == TRUE) goto cleanup;
 
 	// convert sample rate to something acceptable, if needed
 
@@ -144,30 +143,19 @@ void loadAudioFile(const char* filePath){
 	else // we need to fill output_frames_gen with something since the following code uses it
 		conversionData.output_frames_gen = info.frames * info.channels;
 
-	if (cancellationRequest == TRUE) goto cleanup;
-
-	int newFrameCount = conversionData.output_frames_gen * info.channels;
+	newFrameCount = conversionData.output_frames_gen * info.channels;
 	free(tempAudioDataBuf);
 	tempAudioDataBuf = calloc(newFrameCount / info.channels, sizeof(float));
 
 	// simplify all channels down to one
 	for (int i = 0; i < newFrameCount / info.channels; i++)
 	{
-		if (cancellationRequest == TRUE) goto cleanup;
-
 		for (int j = 0; j < info.channels; j++)
 			tempAudioDataBuf[i] += audioDataBuf[i * info.channels + j];
 		tempAudioDataBuf[i] /= info.channels;
 	}
 	printf("Loaded %s\n", filePath);
-cleanup:
-	if (audioDataBuf) free(audioDataBuf);
-	if (tempAudioDataBuf) free(tempAudioDataBuf);
-	InterlockedExchange(&threadRunning, FALSE);
-	InterlockedExchange(&cancellationRequest, FALSE);
-	pthread_exit(NULL);
 }
-
 
 //play the loaded audio file
 void playAudioThread() {
@@ -228,7 +216,6 @@ int togglePlayingAudio(const char* audioPath) {
 
 	InterlockedExchange(&threadRunning, TRUE);
 	pthread_create(&soundPlayer, NULL, playAudioThread,NULL);
-	pthread_join(soundPlayer, NULL);
 	//printf("Loaded file: %s\n", getFileName(audioPath));
 	return PLAYER_NO_ERROR;
 }

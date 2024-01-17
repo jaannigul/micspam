@@ -143,6 +143,11 @@ int main() {
     startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
     loadAudioFile(fileList[audioFileIndex]);
     togglePlayingAudio(fileList[audioFileIndex]);
+
+    while (1) {
+
+    }
+
     return 0;
 }
 
