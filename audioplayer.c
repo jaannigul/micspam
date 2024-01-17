@@ -177,8 +177,8 @@ void playAudioThread() {
 			memcpy(buf2, buf, framesLeft * sizeof(float));
 		}
 
-		StsQueue.push(virtualMicPlaybackQueue, buf, MICSPAM_DATA_PRIORITY);
-		StsQueue.push(headphonesPlaybackQueue, buf2, MICSPAM_DATA_PRIORITY);
+		StsQueue.push(virtualMicPlaybackQueue, buf, MICSPAM_DATA_PRIORITY, TRUE);
+		StsQueue.push(headphonesPlaybackQueue, buf2, MICSPAM_DATA_PRIORITY, TRUE);
 
 		framesCopied++;
 		framesLeft -= BUFFER_FRAMES;
