@@ -13,11 +13,17 @@ int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
     void* userdata) {
 
     float* forwardData = calloc(BUFFER_FRAMES, sizeof(float));
+    float* playbackDataHeadphones = StsQueue.pop(headphonesPlaybackQueue);
     if (forwardData) {
         memcpy(forwardData, in, BUFFER_FRAMES*sizeof(float));
         StsQueue.push(virtualMicPlaybackQueue, forwardData, REAL_MIC_DATA_PRIORITY);
-        StsQueue.push(headphonesPlaybackQueue, forwardData, REAL_MIC_DATA_PRIORITY);
     }
+    if (playbackDataHeadphones) {
+        memcpy(out, playbackDataHeadphones, BUFFER_FRAMES * sizeof(float));
+        free(playbackDataHeadphones); // as we malloced it, we have to free this data
+
+    }
+
 
     return 0;
 }
