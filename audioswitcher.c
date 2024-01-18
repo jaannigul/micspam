@@ -29,7 +29,7 @@ int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
         free(playbackDataHeadphones); // as we malloced it, we have to free this data
 
     }
-    else memset(out, 0x0, BUFFER_FRAMES);
+    else memset(out, 0x0, *headphoneChannelCount * BUFFER_FRAMES);
 
 
     return 0;
