@@ -10,6 +10,7 @@
 #include "consts.h"
 
 #include "audioplayer.h"
+#include "kbdcommands.h"
 
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
@@ -142,6 +143,12 @@ int main() {
     numFiles = getUserAudioFiles(USER_AUDIO_FILES_PATH_WILDCARD, fileList);
     printFileList();
     startSwitchingAudio(realDeviceAudio, virtualDeviceAudio);
+
+    pthread_t keyboardThread;
+    void* threadArgs[2] = {fileList, &numFiles};
+    pthread_create(&keyboardThread, NULL, keyboardCommandListener, threadArgs);
+    pthread_detach(keyboardThread);
+
     char command[16] = { 0 };
     while (1) {
         printf("Command: ");
@@ -167,6 +174,7 @@ int main() {
         }
     }
 
+    pthread_cancel(keyboardThread);
 
     return 0;
 }

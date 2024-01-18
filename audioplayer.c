@@ -219,11 +219,11 @@ int togglePlayingAudio(const char* audioPath) {
 			StsQueue.removeAll(virtualMicPlaybackQueue);
 			StsQueue.removeAll(headphonesPlaybackQueue);
 
-			return PLAYER_NO_ERROR;
+			return PLAYER_THREAD_KILLED;
 		}
 	}
 
 	InterlockedExchange(&threadRunning, TRUE);
-	pthread_create(&soundPlayer, NULL, playAudioThread,NULL);
+	pthread_create(&soundPlayer, NULL, playAudioThread, NULL);
 	return PLAYER_NO_ERROR;
 }

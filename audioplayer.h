@@ -3,8 +3,9 @@
 #include <pthread.h>
 #include <Windows.h>
 
-enum AudioPlayerErrors {
+enum AudioPlayerResponses {
 	PLAYER_NO_ERROR = 0,
+	PLAYER_THREAD_KILLED,
 	PLAYER_COULDNT_FIND_AUDIO,
 	PLAYER_THREAD_FAILED_TO_KILL
 };

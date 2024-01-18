@@ -154,6 +154,7 @@
     <ClCompile Include="main.c" />
     <ClCompile Include="audioswitcher.c" />
     <ClCompile Include="deviceIDs.c" />
+    <ClCompile Include="kbdcommands.c" />
     <ClCompile Include="utils\queue\sts_queue.c" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +162,7 @@
     <ClInclude Include="consts.h" />
     <ClInclude Include="deviceIDs.h" />
     <ClInclude Include="audioplayer.h" />
+    <ClInclude Include="kbdcommands.h" />
     <ClInclude Include="utils\queue\sts_queue.h" />
   </ItemGroup>
   <ItemGroup>

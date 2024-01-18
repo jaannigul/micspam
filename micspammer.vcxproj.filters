@@ -30,6 +30,9 @@
     <ClCompile Include="audioplayer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="kbdcommands.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audioswitcher.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="audioplayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kbdcommands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
