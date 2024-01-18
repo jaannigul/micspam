@@ -48,6 +48,14 @@ static void removeAll(StsHeader* header) {
 	pthread_mutex_unlock(&header->mutex);
 }
 
+static int getCurrentPriority(StsHeader* header) {
+	pthread_mutex_lock(&header->mutex);
+	int res = header->head == NULL ? 0 : header->head->priority;
+	pthread_mutex_unlock(&header->mutex);
+
+	return res;
+}
+
 static _Bool isEmpty(StsHeader* header) {
 	pthread_mutex_lock(&header->mutex);
 	_Bool res = header->head == NULL;
@@ -119,6 +127,7 @@ _StsQueue const StsQueue = {
   destroy,
   removeAll,
   isEmpty,
+  getCurrentPriority,
   push,
   pop
 };

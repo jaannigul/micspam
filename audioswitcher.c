@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <Windows.h>
+
+#include "globals.h"
 #include "deviceIDs.h"
 
 StsHeader* virtualMicPlaybackQueue = NULL;
@@ -23,9 +25,10 @@ int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
         int channels = *headphoneChannelCount;
 
         // 1 to N channel conversion, since our playback data is mono
+        // also volume management from kbdcommands.c
         for (int i = 0; i < BUFFER_FRAMES; i++)
             for (int chnl = 0; chnl < channels; chnl++)
-                *(out + i * channels + chnl) = *(playbackDataHeadphones + i);
+                *(out + i * channels + chnl) = *(playbackDataHeadphones + i) * soundVolume;
 
         free(playbackDataHeadphones); // as we malloced it, we have to free this data
 
@@ -40,8 +43,14 @@ int virtualMicCallback(float* out, float* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
     void* userdata) {
 
+    int soundPriority = StsQueue.getCurrentPriority(virtualMicPlaybackQueue);
     float* playbackData = StsQueue.pop(virtualMicPlaybackQueue);
     if (playbackData) {
+
+        if (soundPriority == MICSPAM_DATA_PRIORITY) // we need to change volume for micspam data
+            for (int i = 0; i < BUFFER_FRAMES; i++)
+                playbackData[i] *= soundVolume;
+
         memcpy(out, playbackData, BUFFER_FRAMES * sizeof(float));
         free(playbackData); // as we malloced it, we have to free this data
     }
