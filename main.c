@@ -157,7 +157,6 @@ int main() {
 
         if (isdigit(command[0])) { // choose audio file via index
             int audioFileIndex = atoi(command);
-            loadAudioFile(fileList[audioFileIndex]);
             togglePlayingAudio(fileList[audioFileIndex]);
         }
         else if (strcmp(command, "exit") == 0) { // exit

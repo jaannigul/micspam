@@ -13,11 +13,43 @@ pthread_t soundPlayer;
 volatile _Bool threadRunning = FALSE; // shitty workaround for stdatomic.h to check if our audio player thread is running
 volatile _Bool cancellationRequest = FALSE;
 
-SRC_DATA conversionData = { 0 };
-int newFrameCount = 0;
-SF_INFO info;
-float* audioDataBuf = 0;
-float* tempAudioDataBuf = 0;
+// copied from https://github.com/libsndfile/libsamplerate/blob/master/examples/varispeed-play.c
+
+typedef struct
+{
+	int			magic;
+	SNDFILE* sndfile;
+	SF_INFO 	sfinfo;
+
+	float		buffer[BUFFER_FRAMES];
+} SNDFILE_CB_DATA;
+
+#define ARRAY_LEN(x)	((int) (sizeof (x) / sizeof ((x) [0])))
+
+// what the fuck does this do
+static long
+src_input_callback(void* cb_data, float** audio)
+{
+	SNDFILE_CB_DATA* data = (SNDFILE_CB_DATA*)cb_data;
+	const int input_frames = ARRAY_LEN(data->buffer) / data->sfinfo.channels;
+	int		read_frames;
+
+	for (read_frames = 0; read_frames < input_frames; )
+	{
+		sf_count_t position;
+
+		read_frames += (int)sf_readf_float(data->sndfile, data->buffer + read_frames * data->sfinfo.channels, input_frames - read_frames);
+
+		position = sf_seek(data->sndfile, 0, SEEK_CUR);
+
+		if (position < 0 || position == data->sfinfo.frames)
+			sf_seek(data->sndfile, 0, SEEK_SET);
+	};
+
+	*audio = &(data->buffer[0]);
+
+	return input_frames;
+}
 
 BOOL directoryExists(const char* path)
 {
@@ -107,87 +139,79 @@ char** allocateFileList(int numFiles) {
 	return fileList;
 }
 
-void loadAudioFile(const char* filePath) {
+//play the loaded audio file
+void playAudioThread(const char* filePath) {
+	printf("Playing audio\n");
 	printf("path : %s\n", filePath);
 
-	SNDFILE* file;
 	// read the entire sound file to memory
-	file = sf_open(filePath, SFM_READ, &info);
+	SF_INFO info;
+	SNDFILE* file = sf_open(filePath, SFM_READ, &info);
 	if (!file) {
 		fprintf(stderr, "Audio player thread could not open audio file: %s\n", filePath);
 		return;
 	}
 
-	audioDataBuf = calloc(info.channels * info.frames, sizeof(float));
+	SRC_STATE* converter = src_new(SRC_LINEAR, info.channels, NULL);
+	if (!converter) {
+		fprintf(stderr, "Audio player thread failed to open sample rate converter.\n");
+		return;
+	}
+
+	float* audioDataBuf = calloc(info.channels * info.frames, sizeof(float));
 	sf_read_float(file, audioDataBuf, info.channels * info.frames);
 
-	// convert sample rate to something acceptable, if needed
+	SRC_DATA conversionData = { 0 };
+	int inputFramesLeft = info.frames;
+	conversionData.src_ratio = realMicSampleRate / info.samplerate;
+	float* tempAudioDataBuf = calloc((size_t)ceil(conversionData.src_ratio * (double)info.channels * BUFFER_FRAMES), sizeof(float));
+	conversionData.data_in = audioDataBuf;
+	conversionData.data_out = tempAudioDataBuf;
+	conversionData.input_frames = info.frames;
+	conversionData.output_frames = BUFFER_FRAMES;
 
-	if (info.samplerate != realMicSampleRate) {
-		conversionData.src_ratio = realMicSampleRate / info.samplerate;
-		tempAudioDataBuf = calloc((size_t)(conversionData.src_ratio * (double)info.channels * (double)info.frames), sizeof(float));
-		conversionData.data_in = audioDataBuf;
-		conversionData.data_out = tempAudioDataBuf;
-		conversionData.input_frames = info.frames;
-		conversionData.output_frames = (size_t)(conversionData.src_ratio * (double)info.frames);
+	if (cancellationRequest == TRUE) goto cleanup;
 
-		int res = src_simple(&conversionData, SRC_LINEAR, info.channels);
-		if (res != 0)
-			fprintf(stderr, "Audio player thread failed to convert sample rate, output audio can be wonky. Error: %s", src_strerror(res));
-		else {
-			free(audioDataBuf);
-			audioDataBuf = calloc(conversionData.output_frames_gen * info.channels, sizeof(float));
-			memcpy(audioDataBuf, tempAudioDataBuf, conversionData.output_frames_gen * info.channels * sizeof(float));
-		}
-	}
-	else // we need to fill output_frames_gen with something since the following code uses it
-		conversionData.output_frames_gen = info.frames * info.channels;
-
-	newFrameCount = conversionData.output_frames_gen * info.channels;
-	free(tempAudioDataBuf);
-	tempAudioDataBuf = calloc(newFrameCount / info.channels, sizeof(float));
-
-	// simplify all channels down to one
-	for (int i = 0; i < newFrameCount / info.channels; i++)
-	{
-		for (int j = 0; j < info.channels; j++)
-			tempAudioDataBuf[i] += audioDataBuf[i * info.channels + j];
-		tempAudioDataBuf[i] /= info.channels;
-	}
-	printf("Loaded %s\n", filePath);
-}
-
-//play the loaded audio file
-void playAudioThread() {
-	printf("Playing audio\n");
-	// send the data over, while periodically checking for cancel request
-	int framesLeft = newFrameCount / info.channels;
-	int framesCopied = 0;
-	while (framesLeft > 0) {
+	// convert frames one by one, send them over to virtual mic and playback
+	while (inputFramesLeft > 0) {
 		if (cancellationRequest == TRUE) goto cleanup;
+
+		int res = src_process(converter, &conversionData); // TODO: check the error in future
+
+		conversionData.data_in += conversionData.input_frames_used * info.channels; // keep moving the data pointer by the amount of frames used
+		inputFramesLeft -= conversionData.input_frames_used;
+		conversionData.input_frames = inputFramesLeft;
+
+		int monoFrames = min(conversionData.output_frames_gen, BUFFER_FRAMES);
+		float* framesToSendSoon = calloc(monoFrames, sizeof(float));
+
+		// simplify all channels down to one
+		for (int i = 0; i < monoFrames; i++)
+		{
+			for (int j = 0; j < info.channels; j++)
+				framesToSendSoon[i] += tempAudioDataBuf[i * info.channels + j];
+			framesToSendSoon[i] /= info.channels;
+		}
 
 		float* buf = calloc(BUFFER_FRAMES, sizeof(float));
 		float* buf2 = calloc(BUFFER_FRAMES, sizeof(float));
-		if (!buf || !buf2)
-			continue; // try as long as thread is allowed to run
+		if (!buf || !buf2) {
+			free(framesToSendSoon);
+			continue;
+		}
 
-		if (framesLeft >= BUFFER_FRAMES) {
-			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, BUFFER_FRAMES * sizeof(float));
-			memcpy(buf2, buf, BUFFER_FRAMES * sizeof(float));
-		}
-		else {
-			memcpy(buf, tempAudioDataBuf + framesCopied * BUFFER_FRAMES, framesLeft * sizeof(float));
-			memcpy(buf2, buf, framesLeft * sizeof(float));
-		}
+		memcpy(buf, framesToSendSoon, monoFrames * sizeof(float));
+		memcpy(buf2, buf, monoFrames * sizeof(float));
 
 		StsQueue.push(virtualMicPlaybackQueue, buf, MICSPAM_DATA_PRIORITY, TRUE);
 		StsQueue.push(headphonesPlaybackQueue, buf2, MICSPAM_DATA_PRIORITY, TRUE);
 
-		framesCopied++;
-		framesLeft -= BUFFER_FRAMES;
+		free(framesToSendSoon);
 	}
 
 cleanup:
+	if (file) sf_close(file);
+	if (converter) src_delete(converter);
 	if(audioDataBuf) free(audioDataBuf);
 	if(tempAudioDataBuf) free(tempAudioDataBuf);
 	InterlockedExchange(&threadRunning, FALSE);
@@ -224,6 +248,6 @@ int togglePlayingAudio(const char* audioPath) {
 	}
 
 	InterlockedExchange(&threadRunning, TRUE);
-	pthread_create(&soundPlayer, NULL, playAudioThread, NULL);
+	pthread_create(&soundPlayer, NULL, playAudioThread, audioPath);
 	return PLAYER_NO_ERROR;
 }
