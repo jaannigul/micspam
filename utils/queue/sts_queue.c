@@ -86,7 +86,6 @@ static void* pop(StsHeader* header) {
 	else {
 		// Rewire
 		header->head = head->next;
-		printf("%d\n", head->priority);
 
 		// Get head and free element memory
 		void* value = head->value;

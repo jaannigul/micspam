@@ -6,12 +6,12 @@
 #include <pthread.h>
 
 int KEYBOARD_PLAY_OR_STOP_AUDIO_BIND = VK_OEM_PERIOD;
-// int KEYBOARD_NEXT_AUDIO_BIND;
-// int KEYBOARD_PREV_AUDIO_BIND;
+int KEYBOARD_NEXT_AUDIO_BIND = VK_OEM_MINUS;
+int KEYBOARD_PREV_AUDIO_BIND;
 // int KEYBOARD_RELOAD_AUDIO_FILES_BIND;
 
 
-int currentlySelectedSong = 0;
+int currentlySelectedSong = 1;
 
 void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fileList, int numFiles
 	char** fileList = threadArgs[0];
@@ -36,5 +36,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 				break;
 			}
 		}
+
+		//if()
 	}
 }
