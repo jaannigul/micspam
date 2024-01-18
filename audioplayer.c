@@ -191,6 +191,8 @@ void playAudioThread(const char* filePath) {
 			for (int j = 0; j < info.channels; j++)
 				framesToSendSoon[i] += tempAudioDataBuf[i * info.channels + j];
 			framesToSendSoon[i] /= info.channels;
+			framesToSendSoon[i] *= soundVolume;
+
 		}
 
 		float* buf = calloc(BUFFER_FRAMES, sizeof(float));

@@ -12,6 +12,7 @@ int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
     double stream_time, rtaudio_stream_status_t status,
     int* headphoneChannelCount) { // userdata: int* headphoneChannelCount
 
+    float zero = 0.0f;
     float* forwardData = calloc(BUFFER_FRAMES, sizeof(float));
     float* playbackDataHeadphones = StsQueue.pop(headphonesPlaybackQueue);
     if (forwardData) {
@@ -29,7 +30,7 @@ int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
         free(playbackDataHeadphones); // as we malloced it, we have to free this data
 
     }
-    else memset(out, 0x0, *headphoneChannelCount * BUFFER_FRAMES);
+    else memset(out, *(int*)&zero, *headphoneChannelCount * BUFFER_FRAMES * sizeof(float));
 
 
     return 0;
