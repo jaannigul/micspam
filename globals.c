@@ -1,3 +1,3 @@
 #include "globals.h"
 
-static float soundVolume = 0.4f;
+float soundVolume = 0.4f;

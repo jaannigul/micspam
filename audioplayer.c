@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "globals.h"
+
 pthread_t soundPlayer;
 volatile _Bool threadRunning = FALSE; // shitty workaround for stdatomic.h to check if our audio player thread is running
 volatile _Bool cancellationRequest = FALSE;
