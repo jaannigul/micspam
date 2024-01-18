@@ -22,8 +22,11 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 	char** fileList = threadArgs[0];
 	int numFiles = *(int*)threadArgs[1];
 
+	if(numFiles == 0)
+		printf("[KBD CMD] Warning: you have no audio samples, some commands will not work\n" );
+
 	while (1) {
-		if (GetAsyncKeyState(KEYBOARD_PLAY_OR_STOP_AUDIO_BIND) & 1) {
+		if (GetAsyncKeyState(KEYBOARD_PLAY_OR_STOP_AUDIO_BIND) & 1 && numFiles > 0) {
 
 			int res = togglePlayingAudio(fileList[currentlySelectedSong]);
 			switch (res) {
@@ -42,12 +45,13 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			}
 		}
 
-		if (GetAsyncKeyState(KEYBOARD_NEXT_AUDIO_BIND) & 1) {
+		if (GetAsyncKeyState(KEYBOARD_NEXT_AUDIO_BIND) & 1 && numFiles > 0) {
+
 			currentlySelectedSong = (currentlySelectedSong + 1) % numFiles;
 			printf("[KBD CMD] Audio file '%s' selected as active song.\n", fileList[currentlySelectedSong]);
 		}
 
-		if (GetAsyncKeyState(KEYBOARD_PREV_AUDIO_BIND) & 1) {
+		if (GetAsyncKeyState(KEYBOARD_PREV_AUDIO_BIND) & 1 && numFiles > 0) {
 			currentlySelectedSong--;
 			if (currentlySelectedSong < 0) currentlySelectedSong = numFiles - 1;
 
