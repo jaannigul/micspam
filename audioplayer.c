@@ -209,6 +209,11 @@ void playAudioThread(const char* filePath) {
 		free(framesToSendSoon);
 	}
 
+	while (!StsQueue.isEmpty(headphonesPlaybackQueue)) { // loop required to make abruptly stopping audio work, as the toggleaudioplayer func looks if the thread is running, not if mic queue has micspam data in it
+		if (cancellationRequest == TRUE) goto cleanup;
+		Sleep(1);
+	}
+
 cleanup:
 	if (file) sf_close(file);
 	if (converter) src_delete(converter);

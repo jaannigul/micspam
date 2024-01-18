@@ -25,17 +25,35 @@ static StsHeader* create() {
 	return handle;
 }
 
-static void removeAll(StsHeader* header) {
+static void removeAllInternal(StsHeader* header) {
 	StsElement* el = header->head;
 	while (el != NULL) {
 		StsElement* next = el->next;
-		
+
 		if (el->isMalloced)
 			free(el->value);
 
 		free(el);
 		el = next;
 	}
+
+	header->head = NULL;
+	header->tail = NULL;
+}
+
+
+static void removeAll(StsHeader* header) {
+	pthread_mutex_lock(&header->mutex);
+	removeAllInternal(header);
+	pthread_mutex_unlock(&header->mutex);
+}
+
+static _Bool isEmpty(StsHeader* header) {
+	pthread_mutex_lock(&header->mutex);
+	_Bool res = header->head == NULL;
+	pthread_mutex_unlock(&header->mutex);
+
+	return res;
 }
 
 static void destroy(StsHeader* header) {
@@ -67,7 +85,7 @@ static void push(StsHeader* header, void* elem, int priority, _Bool isElemMalloc
 		header->tail = element;
 	}
 	else if (header->head->priority < priority) {
-		removeAll(header);
+		removeAllInternal(header);
 		header->head = element;
 		header->tail = element;
 	}
@@ -100,6 +118,7 @@ _StsQueue const StsQueue = {
   create,
   destroy,
   removeAll,
+  isEmpty,
   push,
   pop
 };
