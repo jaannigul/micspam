@@ -5,6 +5,7 @@
 #include <pthread.h>
 #include <rtaudio/rtaudio_c.h>
 #include <Windows.h>
+
 #include "deviceIDs.h"
 #include "audioswitcher.h"
 #include "consts.h"
@@ -12,6 +13,7 @@
 #include "audioplayer.h"
 #include "kbdcommands.h"
 
+#include "gui/uiaccess.h"
 #include "gui/gui_main.h"
 
 rtaudio_t realDeviceAudio = 0;
@@ -110,7 +112,11 @@ void printFileList() {
 
 int main() {
 
-    guiTestEntryPoint();
+    DWORD err = PrepareForUIAccess();
+    if (err != ERROR_SUCCESS)
+        printf("Error setting up UI access. This is required for overlaying things over an exclusive fullscreen game. GUI popups for the micspammer are disabled.\n");
+    else
+        guiTestEntryPoint();
 
     realDeviceAudio = rtaudio_create(RTAUDIO_API_WINDOWS_WASAPI);
     if (!realDeviceAudio) {
