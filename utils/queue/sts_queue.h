@@ -14,6 +14,8 @@
 
 typedef struct StsHeader StsHeader;
 
+EXTERN_C_START
+
 typedef struct {
 	StsHeader* (* const create)();
 	void (* const destroy)(StsHeader* handle);
@@ -25,5 +27,7 @@ typedef struct {
 } _StsQueue;
 
 EXTERN_C _StsQueue const StsQueue;
+
+EXTERN_C_END
 
 #endif

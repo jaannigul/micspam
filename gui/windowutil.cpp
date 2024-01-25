@@ -6,9 +6,7 @@ const char* windowClass = "micspammerWindow";
 
 // hacky solution that fixes the problem where our window will not change size properly
 void setWindowPosAndSize(HWND window, int xPos, int yPos, int width, int height) {
-    SetWindowLong(window, GWL_STYLE, WS_VISIBLE);
     SetWindowPos(window, HWND_TOP, xPos, yPos, width, height, NULL);
-    SetWindowLong(window, GWL_STYLE, 0);
 }
 
 void hideWindow(HWND window) {
@@ -34,7 +32,7 @@ HWND createWindow(WNDPROC windowCallback) {
     wc.hInstance = GetModuleHandle(NULL);
     wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)COLOR_WINDOWFRAME;
+    wc.hbrBackground = CreateSolidBrush(RGB(22, 22, 22));
     wc.lpszMenuName = NULL;
     wc.lpszClassName = windowClass;
     wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
@@ -61,7 +59,7 @@ HWND createWindow(WNDPROC windowCallback) {
         registerClassRes,
         L"Title",
         WS_POPUP | WS_VISIBLE,
-        CW_USEDEFAULT, CW_USEDEFAULT, 100, 100,
+        CW_USEDEFAULT, CW_USEDEFAULT, 500, 500,
         NULL,
         NULL,
         GetModuleHandle(NULL),
@@ -72,12 +70,12 @@ HWND createWindow(WNDPROC windowCallback) {
 
     if (hwnd == NULL)
     {
-        std::cout << "failed to create window" << std::endl;
+        std::cerr << "failed to create window" << std::endl;
         return 0;
     }
 
     // hacky solution required so that this window will not start minimizing fullscreen games
-    SetWindowLong(hwnd, GWL_STYLE, 0);
+    //SetWindowLong(hwnd, GWL_STYLE, 0);
     //SetWindowLong(hwnd, GWL_EXSTYLE, 0);
 
     return hwnd;

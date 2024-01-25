@@ -26,33 +26,49 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 void* __cdecl popupThread(void* arg) {
-    HWND hWindow = static_cast<HWND>(arg);
+    HWND hWindow = createWindow(WndProc);
+    if (!hWindow) return 0;
 
     std::chrono::steady_clock::time_point popupStartTime = { };
 
+    MSG msg;
     while (true) {
-        Sleep(1);
+        if (PeekMessage(&msg, NULL, 0, 0, TRUE)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
 
         // handle popup animations
         handlePopupAnimation(hWindow, popupStartTime);
 
-        int* popupType = static_cast<int*>(StsQueue.pop(popupTypesQueue));
-        if (popupType == nullptr)
+        PopupData* data = static_cast<PopupData*>(StsQueue.pop(popupTypesQueue));
+        if (data == nullptr)
             continue;
 
         std::chrono::steady_clock::time_point popupStartTime = std::chrono::steady_clock::now();
+        setWindowTransparency(hWindow, 255); // make the window visible again
+        displayCorrectPopup(hWindow, *data);
     }
 
     return 0;
 }
 
 int guiTestEntryPoint() {
-    HWND hWindow = createWindow(WndProc);
-    if (!hWindow) return 1;
+    popupTypesQueue = StsQueue.create();
+    if (popupTypesQueue == NULL)
+        return 1;
+
+    PopupData* data = static_cast<PopupData*>(malloc(sizeof(PopupData)));
+    data->type = POPUP_TEXT;
+    data->userdata = (void*)"Volume set to 50%";
 
     pthread_t thread;
-    pthread_create(&thread, NULL, popupThread, hWindow);
+    pthread_create(&thread, NULL, popupThread, NULL);
     pthread_detach(thread);
+
+    Sleep(3000);
+
+    StsQueue.push(popupTypesQueue, data, 0);
 
 	return 0;
 }

@@ -5,7 +5,7 @@
 
 enum PopupType {
 	POPUP_TEST = 0,
-	POPUP_VOLUME,
+	POPUP_TEXT,
 	POPUP_SONG
 };
 
