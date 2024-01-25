@@ -1,11 +1,9 @@
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <Windows.h>
+
+EXTERN_C_START
 
 int guiTestEntryPoint();
 
-#ifdef __cplusplus
-} // extern
-#endif
+EXTERN_C_END

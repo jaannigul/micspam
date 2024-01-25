@@ -1,1 +1,11 @@
 #pragma once
+
+#include <Windows.h>
+
+EXTERN_C_START
+
+void setWindowPosAndSize(HWND window, int xPos, int yPos, int width, int height);
+void hideWindow(HWND window);
+HWND createWindow(WNDPROC windowCallback);
+
+EXTERN_C_END

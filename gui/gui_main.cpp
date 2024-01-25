@@ -2,6 +2,10 @@
 #include <iostream>
 #include <Windows.h>
 
+int popupThread(HWND hWindow) {
+
+}
+
 int guiTestEntryPoint() {
 	std::cout << "a" << std::endl;
 
