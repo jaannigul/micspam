@@ -10,18 +10,20 @@
  * types, structs or other things.
  */
 
+#include <Windows.h>
+
 typedef struct StsHeader StsHeader;
 
 typedef struct {
 	StsHeader* (* const create)();
 	void (* const destroy)(StsHeader* handle);
 	void (* const removeAll)(StsHeader* header);
-	_Bool (* const isEmpty)(StsHeader* header);
+	int (* const isEmpty)(StsHeader* header);
 	int (* const getCurrentPriority)(StsHeader* header);
 	void (* const push)(StsHeader* handle, void* elem, int priority);
 	void* (* const pop)(StsHeader* handle);
 } _StsQueue;
 
-extern _StsQueue const StsQueue;
+EXTERN_C _StsQueue const StsQueue;
 
 #endif

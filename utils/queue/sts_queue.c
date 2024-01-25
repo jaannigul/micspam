@@ -56,7 +56,7 @@ static int getCurrentPriority(StsHeader* header) {
 	return res;
 }
 
-static _Bool isEmpty(StsHeader* header) {
+static int isEmpty(StsHeader* header) {
 	pthread_mutex_lock(&header->mutex);
 	_Bool res = header->head == NULL;
 	pthread_mutex_unlock(&header->mutex);
