@@ -68,6 +68,9 @@
     <ClInclude Include="gui\uiaccess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="gui\gui_main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="switchdevice.ps1" />

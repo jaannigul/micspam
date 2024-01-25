@@ -12,6 +12,8 @@
 #include "audioplayer.h"
 #include "kbdcommands.h"
 
+#include "gui/gui_main.h"
+
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
 char** fileList;
@@ -106,9 +108,9 @@ void printFileList() {
     printf("////////////////////////////////////////////////////\n");
 }
 
-
-
 int main() {
+
+    guiTestEntryPoint();
 
     realDeviceAudio = rtaudio_create(RTAUDIO_API_WINDOWS_WASAPI);
     if (!realDeviceAudio) {
