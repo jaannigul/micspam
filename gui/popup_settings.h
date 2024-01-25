@@ -1,0 +1,7 @@
+#pragma once
+
+#define POPUP_WIDTH 400
+#define POPUP_HEIGHT 100
+
+#define POPUP_SHOW_TIME_SECONDS 3
+#define POPUP_FADE_TIME_SECONDS 1
