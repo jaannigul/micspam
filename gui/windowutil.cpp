@@ -61,7 +61,7 @@ HWND createWindow(WNDPROC windowCallback) {
         registerClassRes,
         L"Title",
         WS_POPUP | WS_VISIBLE,
-        CW_USEDEFAULT, CW_USEDEFAULT, 1, 1,
+        CW_USEDEFAULT, CW_USEDEFAULT, 100, 100,
         NULL,
         NULL,
         GetModuleHandle(NULL),

@@ -157,6 +157,7 @@
     <ClCompile Include="audioplayer.c" />
     <ClCompile Include="globals.c" />
     <ClCompile Include="gui\gui_main.cpp" />
+    <ClCompile Include="gui\popups.cpp" />
     <ClCompile Include="gui\uiaccess.c" />
     <ClCompile Include="gui\windowutil.cpp" />
     <ClCompile Include="main.c" />
@@ -172,6 +173,8 @@
     <ClInclude Include="audioplayer.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="gui\gui_main.h" />
+    <ClInclude Include="gui\popups.h" />
+    <ClInclude Include="gui\popup_settings.h" />
     <ClInclude Include="gui\uiaccess.h" />
     <ClInclude Include="gui\windowutil.h" />
     <ClInclude Include="kbdcommands.h" />

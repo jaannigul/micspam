@@ -18,4 +18,17 @@ void handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point po
 		int alpha = 255 * (timeLeftUntilInvis / POPUP_FADE_TIME_MS);
 		setWindowTransparency(hWindow, alpha);
 	}
+	else
+		setWindowTransparency(hWindow, 255);
+}
+
+void drawTestPopup(HWND hWindow, PopupData data) {
+
+}
+
+void displayCorrectPopup(HWND hWindow, PopupData data) {
+	switch (data.type) {
+	case POPUP_TEST:
+		drawTestPopup(hWindow, data);
+	}
 }
