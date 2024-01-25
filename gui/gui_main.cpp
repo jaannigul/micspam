@@ -54,19 +54,29 @@ void* __cdecl popupThread(void* arg) {
 }
 
 int guiTestEntryPoint() {
+    static const char* song1 = "hallelujah";
+    static const char* song2 = "monki";
+    static const char* song3 = "skibidi toilet";
+
+    static const char* songs[] = {
+        song1, song2, song3
+    };
+
     popupTypesQueue = StsQueue.create();
     if (popupTypesQueue == NULL)
         return 1;
 
     PopupData* data = static_cast<PopupData*>(malloc(sizeof(PopupData)));
-    data->type = POPUP_TEXT;
-    data->userdata = (void*)"Volume set to 50%";
+    data->type = POPUP_SONGS;
+    data->userdata = (void*)songs;
+    data->userdataCount = 3;
+    data->userdataIndex = 0;
 
     pthread_t thread;
     pthread_create(&thread, NULL, popupThread, NULL);
     pthread_detach(thread);
 
-    Sleep(3000);
+    Sleep(1000);
 
     StsQueue.push(popupTypesQueue, data, 0);
 
