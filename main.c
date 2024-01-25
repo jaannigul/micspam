@@ -113,8 +113,10 @@ void printFileList() {
 int main() {
 
     DWORD err = PrepareForUIAccess();
-    if (err != ERROR_SUCCESS)
+    if (err != ERROR_SUCCESS) {
         printf("Error setting up UI access. This is required for overlaying things over an exclusive fullscreen game. GUI popups for the micspammer are disabled.\n");
+        printf("To fix this issue, run the application in administrator mode.\n");
+    }
     else
         guiTestEntryPoint();
 

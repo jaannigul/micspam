@@ -102,6 +102,7 @@
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);portaudio.lib</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
