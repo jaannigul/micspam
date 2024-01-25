@@ -15,6 +15,11 @@ void hideWindow(HWND window) {
     setWindowPosAndSize(window, -2, -2, 1, 1);
 }
 
+void setWindowTransparency(HWND window, int alpha) {
+    SetLayeredWindowAttributes(window, NULL, alpha, LWA_ALPHA);
+    UpdateWindow(window);
+}
+
 HWND createWindow(WNDPROC windowCallback) {
     WNDCLASSEX wc;
     HWND hwnd;
@@ -52,7 +57,7 @@ HWND createWindow(WNDPROC windowCallback) {
 
     const auto pCreateWindowInBand = reinterpret_cast<fCreateWindowInBand>(GetProcAddress(hLib, "CreateWindowInBand"));
 
-    hwnd = pCreateWindowInBand(WS_EX_TOPMOST | WS_EX_TRANSPARENT,
+    hwnd = pCreateWindowInBand(WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_LAYERED,
         registerClassRes,
         L"Title",
         WS_POPUP | WS_VISIBLE,
@@ -73,7 +78,7 @@ HWND createWindow(WNDPROC windowCallback) {
 
     // hacky solution required so that this window will not start minimizing fullscreen games
     SetWindowLong(hwnd, GWL_STYLE, 0);
-    SetWindowLong(hwnd, GWL_EXSTYLE, 0);
+    //SetWindowLong(hwnd, GWL_EXSTYLE, 0);
 
     return hwnd;
 }

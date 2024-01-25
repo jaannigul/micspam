@@ -1,9 +1,11 @@
 #include "gui_main.h"
 #include "windowutil.h"
+#include "popups.h"
 
 #include <iostream>
 #include <Windows.h>
 #include <pthread.h>
+#include <chrono>
 
 StsHeader* popupTypesQueue = nullptr;
 
@@ -26,13 +28,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void* __cdecl popupThread(void* arg) {
     HWND hWindow = static_cast<HWND>(arg);
 
+    std::chrono::steady_clock::time_point popupStartTime = { };
+
     while (true) {
         Sleep(1);
+
+        // handle popup animations
+        handlePopupAnimation(hWindow, popupStartTime);
 
         int* popupType = static_cast<int*>(StsQueue.pop(popupTypesQueue));
         if (popupType == nullptr)
             continue;
 
+        std::chrono::steady_clock::time_point popupStartTime = std::chrono::steady_clock::now();
     }
 
     return 0;
