@@ -36,6 +36,12 @@
     <ClCompile Include="globals.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gui\uiaccess.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\gui_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audioswitcher.h">
@@ -57,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="globals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\uiaccess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
