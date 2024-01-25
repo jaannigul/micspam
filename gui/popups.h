@@ -15,5 +15,5 @@ typedef struct {
 	int userdataIndex;
 } PopupData;
 
-void handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point popupStartTime);
-void displayCorrectPopup(HWND hWindow, PopupData data);
+bool handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point popupStartTime, bool isPopupVisible);
+void displayCorrectPopup(HWND hWindow, PopupData data, int popupX, int popupY);

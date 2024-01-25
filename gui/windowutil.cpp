@@ -55,7 +55,7 @@ HWND createWindow(WNDPROC windowCallback) {
 
     const auto pCreateWindowInBand = reinterpret_cast<fCreateWindowInBand>(GetProcAddress(hLib, "CreateWindowInBand"));
 
-    hwnd = pCreateWindowInBand(WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_LAYERED,
+    hwnd = pCreateWindowInBand(WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE, // NB! WS_EX_TRANSPARENT is required so that we dont keep alt tabbing out of games
         registerClassRes,
         L"Title",
         WS_POPUP | WS_VISIBLE,

@@ -11,19 +11,23 @@
 
 // Handles the showing and transparency part for a popup window
 // Returns if popup is still active
-void handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point popupStartTime) {
+bool handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point popupStartTime, bool isPopupVisible) {
 	std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
 
 	int64_t durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - popupStartTime).count();
 
 	/*if (durationMs > POPUP_SHOW_TIME_MS + POPUP_FADE_TIME_MS) {
 		hideWindow(hWindow);
+		return false;
 	}
 	else if (durationMs > POPUP_SHOW_TIME_MS) {
 		double timeLeftUntilInvis = POPUP_FADE_TIME_MS - (durationMs - POPUP_SHOW_TIME_MS);
 		int alpha = 255 * (timeLeftUntilInvis / POPUP_FADE_TIME_MS);
 		setWindowTransparency(hWindow, alpha);
+		return true;
 	}*/
+
+	return true;
 }
 
 void drawMultipleSongsPopup(HWND hWindow, PopupData data) {
@@ -62,7 +66,6 @@ void drawMultipleSongsPopup(HWND hWindow, PopupData data) {
 
 	// rects for each text
 	int yStart = (POPUP_HEIGHT - WHITE_BAR_HEIGHT - 2* SMALL_FONT_HEIGHT - 1*LARGE_FONT_HEIGHT - 3*TEXT_MARGIN_TOP) / 2; // get the amount of y we need to start from so that all 3 lines of text is centered, or close to being centered
-	std::cout << yStart << std::endl;
 
 	RECT prevTextArea = {
 		5, yStart,
@@ -119,12 +122,14 @@ void drawTextPopup(HWND hWindow, PopupData data) {
 	SelectObject(dc, arial);
 	DrawText(dc, text, strlen(text), &textArea, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 
+	std::cout << "draws" << std::endl;
+
 	DeleteObject(arial);
 	EndPaint(hWindow, &ps2);
 }
 
 
-void displayCorrectPopup(HWND hWindow, PopupData data) {
+void displayCorrectPopup(HWND hWindow, PopupData data, int popupX, int popupY) {
 	setWindowPosAndSize(hWindow, 0, 0, POPUP_WIDTH, POPUP_HEIGHT);
 
 	switch (data.type) {
@@ -133,5 +138,6 @@ void displayCorrectPopup(HWND hWindow, PopupData data) {
 		break;
 	case POPUP_TEXT:
 		drawTextPopup(hWindow, data);
+		break;
 	}
 }
