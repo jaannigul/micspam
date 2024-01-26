@@ -51,7 +51,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 				break;
 			}
 
-			//sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_WORDBREAK | DT_CENTER);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_WORDBREAK | DT_CENTER);
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_NEXT_AUDIO_BIND) & 1 && numFiles > 0) {

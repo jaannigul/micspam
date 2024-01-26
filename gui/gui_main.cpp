@@ -6,13 +6,19 @@
 #include <Windows.h>
 #include <pthread.h>
 #include <chrono>
+#include <queue>
+#include <mutex>
 
-static StsHeader* popupTypesQueue = nullptr;
+std::queue<PopupData*> popupDataQueue;
+std::mutex queueLock;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
+    case WM_USER+1:
+        std::cout << "aaaa" << std::endl;
+        return 0;
     case WM_NCHITTEST:
         return HTCAPTION;
     case WM_MOUSEMOVE: case WM_LBUTTONDOWN:
@@ -31,9 +37,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 void sendPopupNotification(enum PopupType type, void* userdata, int userdataCount, int userdataIndex, int textFlags) {
-    if (popupTypesQueue == nullptr) return;
-    StsHeader* copy = popupTypesQueue; // this somehow fixes crashing issue.... what the fuck
-
     PopupData* data = (PopupData*)malloc(sizeof(PopupData));
     if (!data) return;
 
@@ -43,12 +46,15 @@ void sendPopupNotification(enum PopupType type, void* userdata, int userdataCoun
     data->userdataIndex = userdataIndex;
     data->textFlags = textFlags;
 
-    StsQueue.push(copy, data, 0, FALSE);
+    queueLock.lock();
+    popupDataQueue.push(data);
+    queueLock.unlock();
 }
 
 void* popupThread(void* arg) {
     HWND hWindow = createWindow(WndProc);
     if (!hWindow) return 0;
+    ShowWindow(hWindow, SW_HIDE);
 
     std::chrono::steady_clock::time_point popupStartTime = { };
     bool isPopupVisible = false;
@@ -60,14 +66,15 @@ void* popupThread(void* arg) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        StsHeader* popupTypesQueueLocal = static_cast<StsHeader*>(arg); // this magically fixes a crash that occurs when we stop playing aujdio, and the popupTypesQueue wants to pop something
 
-        // handle popup animations
-        isPopupVisible = handlePopupAnimation(hWindow, popupStartTime, isPopupVisible);
-
-        PopupData* data = static_cast<PopupData*>(StsQueue.pop(popupTypesQueueLocal));
-        if (data == nullptr)
+        queueLock.lock();
+        if (popupDataQueue.empty()) {
+            queueLock.unlock();
             continue;
+        }
+        PopupData* data = popupDataQueue.front();
+        popupDataQueue.pop();
+        queueLock.unlock();
 
         savedData = *data;
         free(data);
@@ -78,7 +85,7 @@ void* popupThread(void* arg) {
         setWindowTransparency(hWindow, 255); // make the window visible again
         ShowWindow(hWindow, SW_SHOW);
 
-        if(savedData.type != POPUP_KEEP_AWAKE) // only redraw the window when needed
+        if (savedData.type != POPUP_KEEP_AWAKE) // only redraw the window when needed
             displayCorrectPopup(hWindow, savedData);
     }
 
@@ -86,12 +93,8 @@ void* popupThread(void* arg) {
 }
 
 int guiTestEntryPoint() {
-    popupTypesQueue = StsQueue.create();
-    if (popupTypesQueue == NULL)
-        return 1;
-
     pthread_t thread;
-    pthread_create(&thread, NULL, popupThread, popupTypesQueue);
+    pthread_create(&thread, NULL, popupThread, NULL);
     pthread_detach(thread);
 
 	return 0;

@@ -68,7 +68,7 @@ HWND createWindow(WNDPROC windowCallback) {
     hwnd = pCreateWindowInBand(WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE, // NB! WS_EX_TRANSPARENT and WS_EX_NOACTIVATE are required so that we dont keep alt tabbing out of games
         registerClassRes,
         L"Title",
-        WS_POPUP | WS_VISIBLE,
+        WS_POPUP,
         CW_USEDEFAULT, CW_USEDEFAULT, 500, 500,
         NULL,
         NULL,
