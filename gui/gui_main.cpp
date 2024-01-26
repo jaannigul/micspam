@@ -47,7 +47,6 @@ void sendPopupNotification(enum PopupType type, void* userdata, int userdataCoun
 }
 
 void* popupThread(void* arg) {
-    StsHeader* popupTypesQueueLocal = popupTypesQueue; // this magically fixes a crash that occurs when we stop playing aujdio, and the popupTypesQueue wants to pop something
     HWND hWindow = createWindow(WndProc);
     if (!hWindow) return 0;
 
@@ -61,6 +60,7 @@ void* popupThread(void* arg) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+        StsHeader* popupTypesQueueLocal = static_cast<StsHeader*>(arg); // this magically fixes a crash that occurs when we stop playing aujdio, and the popupTypesQueue wants to pop something
 
         // handle popup animations
         isPopupVisible = handlePopupAnimation(hWindow, popupStartTime, isPopupVisible);
@@ -91,7 +91,7 @@ int guiTestEntryPoint() {
         return 1;
 
     pthread_t thread;
-    pthread_create(&thread, NULL, popupThread, NULL);
+    pthread_create(&thread, NULL, popupThread, popupTypesQueue);
     pthread_detach(thread);
 
 	return 0;
