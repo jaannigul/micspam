@@ -1,6 +1,8 @@
 #pragma once
 #define BUFFER_FRAMES 256
 
+#define MAX_CHAR_BUF_LEN 2*MAX_PATH
+
 #define REAL_MIC_DATA_PRIORITY 1
 #define MICSPAM_DATA_PRIORITY 2
 

@@ -1,3 +1,3 @@
 #pragma once
 
-extern float soundVolume;
+extern int soundVolume;

@@ -6,7 +6,11 @@ const char* windowClass = "micspammerWindow";
 
 // hacky solution that fixes the problem where our window will not change size properly
 void setWindowPosAndSize(HWND window, int xPos, int yPos, int width, int height) {
-    SetWindowPos(window, HWND_TOP, xPos, yPos, width, height, NULL);
+    UINT flags = 0;
+    if (xPos == -1 || yPos == -1)
+        flags |= SWP_NOMOVE;
+
+    SetWindowPos(window, HWND_TOP, xPos, yPos, width, height, flags);
 }
 
 void hideWindow(HWND window) {
@@ -73,10 +77,6 @@ HWND createWindow(WNDPROC windowCallback) {
         std::cerr << "failed to create window" << std::endl;
         return 0;
     }
-
-    // hacky solution required so that this window will not start minimizing fullscreen games
-    //SetWindowLong(hwnd, GWL_STYLE, 0);
-    //SetWindowLong(hwnd, GWL_EXSTYLE, 0);
 
     return hwnd;
 }

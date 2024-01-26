@@ -16,7 +16,7 @@ bool handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point po
 
 	int64_t durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - popupStartTime).count();
 
-	/*if (durationMs > POPUP_SHOW_TIME_MS + POPUP_FADE_TIME_MS) {
+	if (durationMs > POPUP_SHOW_TIME_MS + POPUP_FADE_TIME_MS) {
 		hideWindow(hWindow);
 		return false;
 	}
@@ -25,7 +25,7 @@ bool handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point po
 		int alpha = 255 * (timeLeftUntilInvis / POPUP_FADE_TIME_MS);
 		setWindowTransparency(hWindow, alpha);
 		return true;
-	}*/
+	}
 
 	return true;
 }
@@ -120,17 +120,26 @@ void drawTextPopup(HWND hWindow, PopupData data) {
 		POPUP_WIDTH, POPUP_HEIGHT - WHITE_BAR_HEIGHT
 	};
 	SelectObject(dc, arial);
-	DrawText(dc, text, strlen(text), &textArea, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 
-	std::cout << "draws" << std::endl;
+	if(data.textFlags & DT_SINGLELINE)
+		DrawText(dc, text, strlen(text), &textArea, DT_CENTER | DT_VCENTER | data.textFlags);
+	else { // manually center multiline text
+		int textHeight = DrawText(dc, text, strlen(text), &textArea, DT_CALCRECT);
+		int drawFromY = (POPUP_HEIGHT - WHITE_BAR_HEIGHT - textHeight) / 2;
+		textArea = {
+			0, drawFromY,
+			POPUP_WIDTH, POPUP_HEIGHT - WHITE_BAR_HEIGHT - drawFromY
+		};
+		DrawText(dc, text, strlen(text), &textArea, DT_CENTER | data.textFlags);
+	}
 
 	DeleteObject(arial);
 	EndPaint(hWindow, &ps2);
 }
 
 
-void displayCorrectPopup(HWND hWindow, PopupData data, int popupX, int popupY) {
-	setWindowPosAndSize(hWindow, 0, 0, POPUP_WIDTH, POPUP_HEIGHT);
+void displayCorrectPopup(HWND hWindow, PopupData data) {
+	setWindowPosAndSize(hWindow, -1, -1, POPUP_WIDTH, POPUP_HEIGHT);
 
 	switch (data.type) {
 	case POPUP_SONGS:

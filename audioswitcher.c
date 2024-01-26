@@ -28,7 +28,7 @@ int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
         // also volume management from kbdcommands.c
         for (int i = 0; i < BUFFER_FRAMES; i++)
             for (int chnl = 0; chnl < channels; chnl++)
-                *(out + i * channels + chnl) = *(playbackDataHeadphones + i) * soundVolume;
+                *(out + i * channels + chnl) = *(playbackDataHeadphones + i) * ((float)soundVolume / 100.0f);
 
         free(playbackDataHeadphones); // as we malloced it, we have to free this data
 

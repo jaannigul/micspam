@@ -8,13 +8,9 @@
 #include <chrono>
 
 StsHeader* popupTypesQueue = nullptr;
-int popupX = 0;
-int popupY = 0;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    std::cout << msg << std::endl;
-
     switch (msg)
     {
     case WM_NCHITTEST:
@@ -31,6 +27,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
+void sendPopupNotification(enum PopupType type, void* userdata, int userdataCount, int userdataIndex, int textFlags) {
+    PopupData* data = new PopupData;
+    data->type = type;
+    data->userdata = userdata;
+    data->userdataCount = userdataCount;
+    data->userdataIndex = userdataIndex;
+    data->textFlags = textFlags;
+
+    StsQueue.push(popupTypesQueue, data, 0);
+}
+
 void* __cdecl popupThread(void* arg) {
     HWND hWindow = createWindow(WndProc);
     if (!hWindow) return 0;
@@ -39,6 +46,7 @@ void* __cdecl popupThread(void* arg) {
     bool isPopupVisible = false;
 
     MSG msg;
+    PopupData savedData;
     while (true) {
         if (PeekMessage(&msg, NULL, 0, 0, TRUE)) {
             TranslateMessage(&msg);
@@ -52,33 +60,28 @@ void* __cdecl popupThread(void* arg) {
         if (data == nullptr)
             continue;
 
+        savedData = *data;
+        delete data; // allocated with C-s malloc, need to dealloc it
+
         std::chrono::steady_clock::time_point popupStartTime = std::chrono::steady_clock::now();
         isPopupVisible = true;
         setWindowTransparency(hWindow, 255); // make the window visible again
-        displayCorrectPopup(hWindow, *data, popupX, popupY);
+
+        if(savedData.type != POPUP_KEEP_AWAKE) // only redraw the window when needed
+            displayCorrectPopup(hWindow, savedData);
     }
 
     return 0;
 }
-
-static const char* a = "MONKI!";
 
 int guiTestEntryPoint() {
     popupTypesQueue = StsQueue.create();
     if (popupTypesQueue == NULL)
         return 1;
 
-    PopupData* data = (PopupData*)malloc(sizeof(PopupData));
-    data->type = POPUP_TEXT;
-    data->userdata = const_cast<char*>(a);
-
     pthread_t thread;
     pthread_create(&thread, NULL, popupThread, NULL);
     pthread_detach(thread);
-
-    Sleep(3000);
-
-    StsQueue.push(popupTypesQueue, data, 0);
 
 	return 0;
 }

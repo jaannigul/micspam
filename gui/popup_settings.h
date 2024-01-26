@@ -1,6 +1,6 @@
 #pragma once
 
-#define POPUP_WIDTH 300
+#define POPUP_WIDTH 400
 #define POPUP_HEIGHT 100
 
 #define POPUP_SHOW_TIME_MS 3000

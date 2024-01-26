@@ -1,19 +1,25 @@
 #pragma once
 
 #include <Windows.h>
-#include <chrono>
 
 enum PopupType {
+	POPUP_KEEP_AWAKE,
 	POPUP_TEXT,
 	POPUP_SONGS
 };
 
 typedef struct {
-	PopupType type;
+	enum PopupType type;
 	void* userdata;
 	int userdataCount;
 	int userdataIndex;
+	int textFlags;
 } PopupData;
 
+#ifdef __cplusplus
+#include <chrono>
+
 bool handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point popupStartTime, bool isPopupVisible);
-void displayCorrectPopup(HWND hWindow, PopupData data, int popupX, int popupY);
+void displayCorrectPopup(HWND hWindow, PopupData data);
+
+#endif
