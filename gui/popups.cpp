@@ -15,6 +15,7 @@ bool handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point po
 	std::chrono::steady_clock::time_point currentTime = std::chrono::steady_clock::now();
 
 	int64_t durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - popupStartTime).count();
+	//std::cout << durationMs << std::endl;
 
 	if (durationMs > POPUP_SHOW_TIME_MS + POPUP_FADE_TIME_MS) {
 		ShowWindow(hWindow, SW_HIDE);

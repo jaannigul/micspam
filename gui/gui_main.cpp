@@ -63,7 +63,7 @@ void* __cdecl popupThread(void* arg) {
         savedData = *data;
         delete data; // allocated with C-s malloc, need to dealloc it
 
-        std::chrono::steady_clock::time_point popupStartTime = std::chrono::steady_clock::now();
+        popupStartTime = std::chrono::steady_clock::now();
         isPopupVisible = true;
         setWindowTransparency(hWindow, 255); // make the window visible again
         ShowWindow(hWindow, SW_SHOW);

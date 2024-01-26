@@ -1,4 +1,5 @@
 #pragma once
+
 #define BUFFER_FRAMES 256
 
 #define MAX_CHAR_BUF_LEN 2*MAX_PATH
