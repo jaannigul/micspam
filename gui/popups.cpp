@@ -43,7 +43,7 @@ void drawMultipleSongsPopup(HWND hWindow, PopupData data) {
 	SetTextColor(dc, RGB(255, 255, 255));
 
 	// format the song names into strings
-	int filePrefixLen = 0;//strlen(USER_AUDIO_FILES_PATH) + 1;
+	int filePrefixLen = strlen(USER_AUDIO_FILES_PATH) + 1;
 	char** start = static_cast<char**>(data.userdata);
 	std::string prevSong, currentSong, nextSong;
 	currentSong = std::format("Curr. {}", start[data.userdataIndex] + filePrefixLen);

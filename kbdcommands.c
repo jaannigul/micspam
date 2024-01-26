@@ -29,10 +29,8 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 		printf("[KBD CMD] Warning: you have no audio samples, some commands will not work\n" );
 
 	while (1) {
-		char* songName = fileList[currentlySelectedSong] + strlen(USER_AUDIO_FILES_PATH) + 1; // remove the prefix
-
 		if (GetAsyncKeyState(KEYBOARD_PLAY_OR_STOP_AUDIO_BIND) & 1 && numFiles > 0) {
-
+			char* songName = fileList[currentlySelectedSong] + strlen(USER_AUDIO_FILES_PATH) + 1;
 			int res = togglePlayingAudio(fileList[currentlySelectedSong]);
 			switch (res) {
 			case PLAYER_NO_ERROR:
@@ -57,8 +55,9 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_NEXT_AUDIO_BIND) & 1 && numFiles > 0) {
-
 			currentlySelectedSong = (currentlySelectedSong + 1) % numFiles;
+			char* songName = fileList[currentlySelectedSong] + strlen(USER_AUDIO_FILES_PATH) + 1;
+
 			printf("[KBD CMD] Audio file '%s' selected as active song.\n", songName);
 
 			sendPopupNotification(POPUP_SONGS, fileList, numFiles, currentlySelectedSong, 0);
@@ -68,6 +67,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			currentlySelectedSong--;
 			if (currentlySelectedSong < 0) currentlySelectedSong = numFiles - 1;
 
+			char* songName = fileList[currentlySelectedSong] + strlen(USER_AUDIO_FILES_PATH) + 1;
 			printf("[KBD CMD] Audio file '%s' selected as active song.\n", songName);
 
 			sendPopupNotification(POPUP_SONGS, fileList, numFiles, currentlySelectedSong, 0);
