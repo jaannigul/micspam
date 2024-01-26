@@ -22,7 +22,7 @@ typedef struct {
 	void (* const removeAll)(StsHeader* header);
 	int (* const isEmpty)(StsHeader* header);
 	int (* const getCurrentPriority)(StsHeader* header);
-	void (* const push)(StsHeader* handle, void* elem, int priority);
+	void (* const push)(StsHeader* handle, void* elem, int priority, int isElemMalloced);
 	void* (* const pop)(StsHeader* handle);
 } _StsQueue;
 

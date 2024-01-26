@@ -7,7 +7,7 @@
 #include <pthread.h>
 #include <chrono>
 
-StsHeader* popupTypesQueue = nullptr;
+static StsHeader* popupTypesQueue = nullptr;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -29,19 +29,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 void sendPopupNotification(enum PopupType type, void* userdata, int userdataCount, int userdataIndex, int textFlags) {
     if (popupTypesQueue == nullptr) return;
+    StsHeader* copy = popupTypesQueue; // this somehow fixes crashing issue.... what the fuck
 
     PopupData* data = (PopupData*)malloc(sizeof(PopupData));
+    if (!data) return;
+
     data->type = type;
     data->userdata = userdata;
     data->userdataCount = userdataCount;
     data->userdataIndex = userdataIndex;
     data->textFlags = textFlags;
 
-    StsQueue.push(popupTypesQueue, data, 0);
+    StsQueue.push(copy, data, 0, FALSE);
 }
 
 void* popupThread(void* arg) {
-    //StsHeader* popupTypesQueue = static_cast<StsHeader*>(arg);
+    StsHeader* popupTypesQueueLocal = static_cast<StsHeader*>(arg); // this magically fixes a crash that occurs when we stop playing aujdio, and the popupTypesQueue wants to pop something
     HWND hWindow = createWindow(WndProc);
     if (!hWindow) return 0;
 
@@ -59,7 +62,7 @@ void* popupThread(void* arg) {
         // handle popup animations
         isPopupVisible = handlePopupAnimation(hWindow, popupStartTime, isPopupVisible);
 
-        PopupData* data = static_cast<PopupData*>(StsQueue.pop(popupTypesQueue));
+        PopupData* data = static_cast<PopupData*>(StsQueue.pop(popupTypesQueueLocal));
         if (data == nullptr)
             continue;
 
