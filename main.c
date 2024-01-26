@@ -5,12 +5,16 @@
 #include <pthread.h>
 #include <rtaudio/rtaudio_c.h>
 #include <Windows.h>
+
 #include "deviceIDs.h"
 #include "audioswitcher.h"
 #include "consts.h"
 
 #include "audioplayer.h"
 #include "kbdcommands.h"
+
+#include "gui/uiaccess.h"
+#include "gui/gui_main.h"
 
 rtaudio_t realDeviceAudio = 0;
 rtaudio_t virtualDeviceAudio = 0;
@@ -90,14 +94,6 @@ _Bool selectMicAndAudioDevices() {
     return TRUE;
 }
 
-void takeUserInput() {
-    // TODO: make this the main thread for looking at keypresses (quitting app, playing sound)
-    while (1) {
-        //if(GetAsyncKeyState()) break;
-        Sleep(1);
-    }
-}
-
 void printFileList() {
     printf("////////////////////////////////////////////////////\n");
     for (int index = 0; index < numFiles; index++) {
@@ -106,9 +102,15 @@ void printFileList() {
     printf("////////////////////////////////////////////////////\n");
 }
 
-
-
 int main() {
+
+    DWORD err = PrepareForUIAccess();
+    if (err != ERROR_SUCCESS) {
+        printf("Error setting up UI access. This is required for overlaying things over an exclusive fullscreen game. GUI popups for the micspammer are disabled.\n");
+        printf("To fix this issue, run the application in administrator mode.\n");
+    }
+    else
+        guiTestEntryPoint();
 
     realDeviceAudio = rtaudio_create(RTAUDIO_API_WINDOWS_WASAPI);
     if (!realDeviceAudio) {
@@ -177,37 +179,3 @@ int main() {
 
     return 0;
 }
-
-/*int main(int argc, char** argv)
-{
-    // read whole file
-    SNDFILE* sndfile;
-    SF_INFO sfinfo;
-    sndfile = sf_open("./audiosamples/skrillex.wav", SFM_READ, &sfinfo);
-    if (sndfile == 0)
-    {
-        exit(1);
-    }
-
-    float* audioIn = calloc(sfinfo.channels * sfinfo.frames, sizeof(float));
-    sf_read_float(sndfile, audioIn, sfinfo.channels * sfinfo.frames);
-    // mixdown
-    float* audioOut = calloc(sfinfo.frames, sizeof(float));
-    for (int i = 0; i < sfinfo.frames; i++)
-    {
-        audioOut[i] = 0;
-        for (int j = 0; j < sfinfo.channels; j++)
-            audioOut[i] += audioIn[i * sfinfo.channels + j];
-        audioOut[i] /= sfinfo.channels;
-    }
-    sf_close(sndfile);
-    // write output
-    int frames = sfinfo.frames;
-    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
-    sfinfo.channels = 1;
-    sndfile = sf_open("./audiosamples/skrillex2.wav", SFM_WRITE, &sfinfo);
-    sf_write_float(sndfile, audioOut, frames);
-    sf_close(sndfile);
-    // free memory
-    return 0;
-}*/

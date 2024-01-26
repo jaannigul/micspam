@@ -94,12 +94,16 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);portaudio.lib</AdditionalDependencies>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
+      <UACUIAccess>false</UACUIAccess>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,6 +156,10 @@
   <ItemGroup>
     <ClCompile Include="audioplayer.c" />
     <ClCompile Include="globals.c" />
+    <ClCompile Include="gui\gui_main.cpp" />
+    <ClCompile Include="gui\popups.cpp" />
+    <ClCompile Include="gui\uiaccess.c" />
+    <ClCompile Include="gui\windowutil.cpp" />
     <ClCompile Include="main.c" />
     <ClCompile Include="audioswitcher.c" />
     <ClCompile Include="deviceIDs.c" />
@@ -164,6 +172,11 @@
     <ClInclude Include="deviceIDs.h" />
     <ClInclude Include="audioplayer.h" />
     <ClInclude Include="globals.h" />
+    <ClInclude Include="gui\gui_main.h" />
+    <ClInclude Include="gui\popups.h" />
+    <ClInclude Include="gui\popup_settings.h" />
+    <ClInclude Include="gui\uiaccess.h" />
+    <ClInclude Include="gui\windowutil.h" />
     <ClInclude Include="kbdcommands.h" />
     <ClInclude Include="utils\queue\sts_queue.h" />
   </ItemGroup>

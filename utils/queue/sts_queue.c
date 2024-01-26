@@ -56,7 +56,7 @@ static int getCurrentPriority(StsHeader* header) {
 	return res;
 }
 
-static _Bool isEmpty(StsHeader* header) {
+static int isEmpty(StsHeader* header) {
 	pthread_mutex_lock(&header->mutex);
 	_Bool res = header->head == NULL;
 	pthread_mutex_unlock(&header->mutex);
@@ -71,7 +71,7 @@ static void destroy(StsHeader* header) {
 	header = NULL;
 }
 
-static void push(StsHeader* header, void* elem, int priority, _Bool isElemMalloced) {
+static void push(StsHeader* header, void* elem, int priority, int isElemMalloced) {
 	// Create new element
 	StsElement* element = malloc(sizeof(StsElement));
 	element->value = elem;
@@ -112,10 +112,7 @@ static void* pop(StsHeader* header) {
 	else {
 		// Rewire
 		header->head = head->next;
-
-		// Get head and free element memory
 		void* value = head->value;
-		free(head);
 
 		pthread_mutex_unlock(&header->mutex);
 		return value;
