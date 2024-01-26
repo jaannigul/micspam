@@ -64,6 +64,8 @@ void* popupThread(void* arg) {
             DispatchMessage(&msg);
         }
 
+        isPopupVisible = handlePopupAnimation(hWindow, popupStartTime, isPopupVisible);
+
         queueLock.lock();
         if (popupDataQueue.empty()) {
             queueLock.unlock();
