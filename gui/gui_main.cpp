@@ -16,9 +16,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
-    case WM_USER+1:
-        std::cout << "aaaa" << std::endl;
-        return 0;
     case WM_NCHITTEST:
         return HTCAPTION;
     case WM_MOUSEMOVE: case WM_LBUTTONDOWN:
