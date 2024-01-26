@@ -13,10 +13,6 @@ void setWindowPosAndSize(HWND window, int xPos, int yPos, int width, int height)
     SetWindowPos(window, HWND_TOP, xPos, yPos, width, height, flags);
 }
 
-void hideWindow(HWND window) {
-    setWindowPosAndSize(window, -2, -2, 1, 1);
-}
-
 void setWindowTransparency(HWND window, int alpha) {
     SetLayeredWindowAttributes(window, NULL, alpha, LWA_ALPHA);
     UpdateWindow(window);

@@ -5,7 +5,6 @@
 EXTERN_C_START
 
 void setWindowPosAndSize(HWND window, int xPos, int yPos, int width, int height);
-void hideWindow(HWND window);
 void setWindowTransparency(HWND window, int alpha);
 HWND createWindow(WNDPROC windowCallback);
 
