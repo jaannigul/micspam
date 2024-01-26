@@ -15,6 +15,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
     case WM_NCHITTEST:
         return HTCAPTION;
+    case WM_MOUSEMOVE: case WM_LBUTTONDOWN:
+        toggleWindowTransparency(hwnd, false);
+        return DefWindowProc(hwnd, msg, wParam, lParam);
     case WM_CLOSE:
         DestroyWindow(hwnd);
         break;
@@ -44,7 +47,7 @@ void sendPopupNotification(enum PopupType type, void* userdata, int userdataCoun
 }
 
 void* popupThread(void* arg) {
-    StsHeader* popupTypesQueueLocal = static_cast<StsHeader*>(arg); // this magically fixes a crash that occurs when we stop playing aujdio, and the popupTypesQueue wants to pop something
+    StsHeader* popupTypesQueueLocal = popupTypesQueue; // this magically fixes a crash that occurs when we stop playing aujdio, and the popupTypesQueue wants to pop something
     HWND hWindow = createWindow(WndProc);
     if (!hWindow) return 0;
 
@@ -71,6 +74,7 @@ void* popupThread(void* arg) {
 
         popupStartTime = std::chrono::steady_clock::now();
         isPopupVisible = true;
+        toggleWindowTransparency(hWindow, false);
         setWindowTransparency(hWindow, 255); // make the window visible again
         ShowWindow(hWindow, SW_SHOW);
 
@@ -87,7 +91,7 @@ int guiTestEntryPoint() {
         return 1;
 
     pthread_t thread;
-    pthread_create(&thread, NULL, popupThread, popupTypesQueue);
+    pthread_create(&thread, NULL, popupThread, NULL);
     pthread_detach(thread);
 
 	return 0;

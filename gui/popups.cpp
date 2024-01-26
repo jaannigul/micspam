@@ -24,6 +24,8 @@ bool handlePopupAnimation(HWND hWindow, std::chrono::steady_clock::time_point po
 	else if (durationMs > POPUP_SHOW_TIME_MS) {
 		double timeLeftUntilInvis = POPUP_FADE_TIME_MS - (durationMs - POPUP_SHOW_TIME_MS);
 		int alpha = 255 * (timeLeftUntilInvis / POPUP_FADE_TIME_MS);
+
+		toggleWindowTransparency(hWindow, true);
 		setWindowTransparency(hWindow, alpha);
 		return true;
 	}

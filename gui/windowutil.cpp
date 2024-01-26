@@ -18,6 +18,16 @@ void setWindowTransparency(HWND window, int alpha) {
     UpdateWindow(window);
 }
 
+void toggleWindowTransparency(HWND window, bool toggle) {
+    LONG attrs = GetWindowLong(window, GWL_EXSTYLE);
+    if (toggle)
+        attrs |= WS_EX_LAYERED;
+    else
+        attrs &= ~WS_EX_LAYERED; // keep everything else except for this attr
+
+    SetWindowLong(window, GWL_EXSTYLE, attrs);
+}
+
 HWND createWindow(WNDPROC windowCallback) {
     WNDCLASSEX wc;
     HWND hwnd;
@@ -55,7 +65,7 @@ HWND createWindow(WNDPROC windowCallback) {
 
     const auto pCreateWindowInBand = reinterpret_cast<fCreateWindowInBand>(GetProcAddress(hLib, "CreateWindowInBand"));
 
-    hwnd = pCreateWindowInBand(WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE, // NB! WS_EX_TRANSPARENT is required so that we dont keep alt tabbing out of games
+    hwnd = pCreateWindowInBand(WS_EX_TOPMOST | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE, // NB! WS_EX_TRANSPARENT and WS_EX_NOACTIVATE are required so that we dont keep alt tabbing out of games
         registerClassRes,
         L"Title",
         WS_POPUP | WS_VISIBLE,
