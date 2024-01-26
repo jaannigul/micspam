@@ -40,7 +40,8 @@ void sendPopupNotification(enum PopupType type, void* userdata, int userdataCoun
     StsQueue.push(popupTypesQueue, data, 0);
 }
 
-void* __cdecl popupThread(void* arg) {
+void* popupThread(void* arg) {
+    //StsHeader* popupTypesQueue = static_cast<StsHeader*>(arg);
     HWND hWindow = createWindow(WndProc);
     if (!hWindow) return 0;
 
@@ -83,7 +84,7 @@ int guiTestEntryPoint() {
         return 1;
 
     pthread_t thread;
-    pthread_create(&thread, NULL, popupThread, NULL);
+    pthread_create(&thread, NULL, popupThread, popupTypesQueue);
     pthread_detach(thread);
 
 	return 0;
