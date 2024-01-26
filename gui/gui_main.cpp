@@ -66,7 +66,7 @@ void* __cdecl popupThread(void* arg) {
         std::chrono::steady_clock::time_point popupStartTime = std::chrono::steady_clock::now();
         isPopupVisible = true;
         setWindowTransparency(hWindow, 255); // make the window visible again
-        ShowWindow(window, SW_SHOW);
+        ShowWindow(hWindow, SW_SHOW);
 
         if(savedData.type != POPUP_KEEP_AWAKE) // only redraw the window when needed
             displayCorrectPopup(hWindow, savedData);
