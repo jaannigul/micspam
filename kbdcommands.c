@@ -53,7 +53,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 				break;
 			}
 
-			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_WORDBREAK);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_WORDBREAK | DT_CENTER);
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_NEXT_AUDIO_BIND) & 1 && numFiles > 0) {
@@ -80,7 +80,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			printf("[KBD CMD] Audio volume increased to %d %%.\n", soundVolume);
 
 			snprintf(popupText, MAX_CHAR_BUF_LEN, "Volume set to %d%%", soundVolume);
-			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, 0);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_VCENTER);
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_DECREASE_VOLUME_BIND) & 1) {
@@ -90,7 +90,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			printf("[KBD CMD] Audio volume decreased to %d %%.\n", soundVolume);
 
 			snprintf(popupText, MAX_CHAR_BUF_LEN, "Volume set to %d%%", soundVolume);
-			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, 0);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_VCENTER);
 		}
 	}
 }
