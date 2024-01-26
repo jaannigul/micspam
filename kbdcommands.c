@@ -29,13 +29,15 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 		printf("[KBD CMD] Warning: you have no audio samples, some commands will not work\n" );
 
 	while (1) {
+		char* songName = fileList[currentlySelectedSong] + strlen(USER_AUDIO_FILES_PATH) + 1; // remove the prefix
+
 		if (GetAsyncKeyState(KEYBOARD_PLAY_OR_STOP_AUDIO_BIND) & 1 && numFiles > 0) {
 
 			int res = togglePlayingAudio(fileList[currentlySelectedSong]);
 			switch (res) {
 			case PLAYER_NO_ERROR:
-				printf("[KBD CMD] Toggling audio for sample %s\n", fileList[currentlySelectedSong]);
-				snprintf(popupText, MAX_CHAR_BUF_LEN, "Toggling audio for sample %s", fileList[currentlySelectedSong]);
+				printf("[KBD CMD] Toggling audio for sample %s\n", songName);
+				snprintf(popupText, MAX_CHAR_BUF_LEN, "Toggling audio for sample %s", songName);
 				break;
 			case PLAYER_THREAD_KILLED:
 				printf("[KBD CMD] Audio player halted.\n");
@@ -46,18 +48,18 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 				snprintf(popupText, MAX_CHAR_BUF_LEN, "Failed to stop audio player thread");
 				break; 
 			case PLAYER_COULDNT_FIND_AUDIO:
-				printf("[KBD CMD] Audio file '%s' has been deleted and can no longer be played.\n");
-				snprintf(popupText, MAX_CHAR_BUF_LEN, "Audio file '%s' has been deleted and can no longer be played.", fileList[currentlySelectedSong]);
+				printf("[KBD CMD] Audio file '%s' has been deleted and can no longer be played.\n", songName);
+				snprintf(popupText, MAX_CHAR_BUF_LEN, "Audio file '%s' has been deleted and can no longer be played.", songName);
 				break;
 			}
 
-			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, 0);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_WORDBREAK);
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_NEXT_AUDIO_BIND) & 1 && numFiles > 0) {
 
 			currentlySelectedSong = (currentlySelectedSong + 1) % numFiles;
-			printf("[KBD CMD] Audio file '%s' selected as active song.\n", fileList[currentlySelectedSong]);
+			printf("[KBD CMD] Audio file '%s' selected as active song.\n", songName);
 
 			sendPopupNotification(POPUP_SONGS, fileList, numFiles, currentlySelectedSong, 0);
 		}
@@ -66,7 +68,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			currentlySelectedSong--;
 			if (currentlySelectedSong < 0) currentlySelectedSong = numFiles - 1;
 
-			printf("[KBD CMD] Audio file '%s' selected as active song.\n", fileList[currentlySelectedSong]);
+			printf("[KBD CMD] Audio file '%s' selected as active song.\n", songName);
 
 			sendPopupNotification(POPUP_SONGS, fileList, numFiles, currentlySelectedSong, 0);
 		}
@@ -78,7 +80,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			printf("[KBD CMD] Audio volume increased to %d %%.\n", soundVolume);
 
 			snprintf(popupText, MAX_CHAR_BUF_LEN, "Volume set to %d%%", soundVolume);
-			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_SINGLELINE);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, 0);
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_DECREASE_VOLUME_BIND) & 1) {
@@ -88,7 +90,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			printf("[KBD CMD] Audio volume decreased to %d %%.\n", soundVolume);
 
 			snprintf(popupText, MAX_CHAR_BUF_LEN, "Volume set to %d%%", soundVolume);
-			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_SINGLELINE);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, 0);
 		}
 	}
 }

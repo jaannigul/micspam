@@ -28,7 +28,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 
 void sendPopupNotification(enum PopupType type, void* userdata, int userdataCount, int userdataIndex, int textFlags) {
-    PopupData* data = new PopupData;
+    if (popupTypesQueue == nullptr) return;
+
+    PopupData* data = (PopupData*)malloc(sizeof(PopupData));
     data->type = type;
     data->userdata = userdata;
     data->userdataCount = userdataCount;
@@ -61,7 +63,7 @@ void* __cdecl popupThread(void* arg) {
             continue;
 
         savedData = *data;
-        delete data; // allocated with C-s malloc, need to dealloc it
+        free(data);
 
         popupStartTime = std::chrono::steady_clock::now();
         isPopupVisible = true;

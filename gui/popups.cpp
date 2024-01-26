@@ -123,15 +123,15 @@ void drawTextPopup(HWND hWindow, PopupData data) {
 	SelectObject(dc, arial);
 
 	if(data.textFlags & DT_SINGLELINE)
-		DrawText(dc, text, strlen(text), &textArea, DT_CENTER | DT_VCENTER | data.textFlags);
+		DrawText(dc, text, strlen(text), &textArea, DT_VCENTER | data.textFlags);
 	else { // manually center multiline text
-		int textHeight = DrawText(dc, text, strlen(text), &textArea, DT_CALCRECT);
+		int textHeight = DrawText(dc, text, strlen(text), &textArea, DT_CALCRECT | data.textFlags);
 		int drawFromY = (POPUP_HEIGHT - WHITE_BAR_HEIGHT - textHeight) / 2;
 		textArea = {
 			0, drawFromY,
 			POPUP_WIDTH, POPUP_HEIGHT - WHITE_BAR_HEIGHT - drawFromY
 		};
-		DrawText(dc, text, strlen(text), &textArea, DT_CENTER | data.textFlags);
+		DrawText(dc, text, strlen(text), &textArea, data.textFlags);
 	}
 
 	DeleteObject(arial);
@@ -140,6 +140,7 @@ void drawTextPopup(HWND hWindow, PopupData data) {
 
 
 void displayCorrectPopup(HWND hWindow, PopupData data) {
+	InvalidateRect(hWindow, NULL, TRUE);
 	setWindowPosAndSize(hWindow, -1, -1, POPUP_WIDTH, POPUP_HEIGHT);
 
 	switch (data.type) {
@@ -150,4 +151,6 @@ void displayCorrectPopup(HWND hWindow, PopupData data) {
 		drawTextPopup(hWindow, data);
 		break;
 	}
+
+	UpdateWindow(hWindow);
 }
