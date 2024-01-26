@@ -2,7 +2,7 @@
 
 #include "audioplayer.h"
 #include "globals.h"
-//#include "gui/gui_main.h"
+#include "gui/gui_main.h"
 #include "consts.h"
 
 #include <Windows.h>
@@ -51,7 +51,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 				break;
 			}
 
-			//sendPopupNotification(POPUP_TEXT, popupText, 0, 0, 0);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, 0);
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_NEXT_AUDIO_BIND) & 1 && numFiles > 0) {
@@ -59,7 +59,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			currentlySelectedSong = (currentlySelectedSong + 1) % numFiles;
 			printf("[KBD CMD] Audio file '%s' selected as active song.\n", fileList[currentlySelectedSong]);
 
-			//sendPopupNotification(POPUP_SONGS, fileList, numFiles, currentlySelectedSong, 0);
+			sendPopupNotification(POPUP_SONGS, fileList, numFiles, currentlySelectedSong, 0);
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_PREV_AUDIO_BIND) & 1 && numFiles > 0) {
@@ -68,7 +68,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 
 			printf("[KBD CMD] Audio file '%s' selected as active song.\n", fileList[currentlySelectedSong]);
 
-			//sendPopupNotification(POPUP_SONGS, fileList, numFiles, currentlySelectedSong, 0);
+			sendPopupNotification(POPUP_SONGS, fileList, numFiles, currentlySelectedSong, 0);
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_INCREASE_VOLUME_BIND) & 1) {
@@ -78,7 +78,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			printf("[KBD CMD] Audio volume increased to %d %%.\n", soundVolume);
 
 			snprintf(popupText, MAX_CHAR_BUF_LEN, "Volume set to %d%%", soundVolume);
-			//sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_SINGLELINE);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_SINGLELINE);
 		}
 
 		if (GetAsyncKeyState(KEYBOARD_DECREASE_VOLUME_BIND) & 1) {
@@ -88,7 +88,7 @@ void keyboardCommandListener(void** threadArgs) { // actual arguments: char** fi
 			printf("[KBD CMD] Audio volume decreased to %d %%.\n", soundVolume);
 
 			snprintf(popupText, MAX_CHAR_BUF_LEN, "Volume set to %d%%", soundVolume);
-			//sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_SINGLELINE);
+			sendPopupNotification(POPUP_TEXT, popupText, 0, 0, DT_SINGLELINE);
 		}
 	}
 }
