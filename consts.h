@@ -9,6 +9,7 @@
 
 #define USER_AUDIO_FILES_PATH ".\\audiosamples"
 #define USER_AUDIO_FILES_PATH_WILDCARD ".\\audiosamples\\*"
+#define USER_LAST_DEVICE_IDS "lastdevices.txt" 
 static const char* ALLOWED_AUDIO_TYPES[] = {
 	"wav",
 	"mp3"

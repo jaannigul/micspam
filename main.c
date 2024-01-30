@@ -31,13 +31,71 @@ void listDevices() {
     }
 }
 
+void loadPreviousDeviceIndices(int* micId, int* virtualMicOutputId, int* virtualMicInputId, int* headphonesId) {
+    FILE* file = NULL;
+    errno_t err;
+    err = fopen_s(&file, USER_LAST_DEVICE_IDS, "r");
+    if (err == 0) {
+        char line[16];
+        int lineNum = 0;
+        while (fgets(line, sizeof(line), file) != NULL) {
+            switch (lineNum) {
+            case 0:
+                *micId = atoi(line);
+                break;
+            case 2:
+                *virtualMicOutputId = atoi(line);
+                break;
+            case 3:
+                *virtualMicInputId = atoi(line);
+                break;
+            case 1:
+                *headphonesId = atoi(line);
+                break;
+            default:
+                printf("something wrong with the file");
+                break;
+            }
+            lineNum++;
+        }
+        fclose(file);
+    }
+    else {
+        perror("Error opening file");
+    }
+}
+
+void saveDeviceIndices(int micId, int virtualMicOutputId, int virtualMicInputId, int headphonesId) {
+    FILE* file = NULL;
+    errno_t err;
+
+    err = fopen_s(&file, USER_LAST_DEVICE_IDS, "w");
+    if (err == 0) { 
+        fprintf(file, "%d\n", micId);
+        fprintf(file, "%d\n", virtualMicOutputId);
+        fprintf(file, "%d\n",virtualMicInputId);
+        fprintf(file, "%d\n", headphonesId);
+        fclose(file);
+        printf("Saved indices\n");
+    }
+    else {
+        perror("Error opening file");
+    }
+}
+
 _Bool selectMicAndAudioDevices() {
     char micSelectedId[8] = { 0 }, headphonesSelectedId[8] = { 0 }, virtualMicOutputSelectedId[8] = { 0 }, virtualMicInputSelectedId[8] = { 0 };
     char *micName = NULL, *vacOutputName = NULL, *headphonesName = NULL, *vacInputName = NULL;
+    int micId = 0, virtualMicOutputId = 0, virtualMicInputId = 0, headphonesId = 0;
     listDevices();
 
-    printf("Choose your real microphone device's number from the list: ");
+    printf("Choose your real microphone device's number from the list or press ENTER to load previously chosen devices: ");
     fgets(micSelectedId, sizeof(micSelectedId), stdin);
+    if (micSelectedId[0] == '\n' && micSelectedId[1] == '\0')
+    {
+        loadPreviousDeviceIndices(&micId,&virtualMicOutputId, &virtualMicInputId, &headphonesId);
+        goto searchDevices;
+    }
     printf("Choose your headphone device's number from the list: ");
     fgets(headphonesSelectedId, sizeof(headphonesSelectedId), stdin);
     printf("Choose your virtual microphone device's number from the list (has output channels): ");
@@ -45,10 +103,12 @@ _Bool selectMicAndAudioDevices() {
     printf("Choose your virtual microphone device's number from the list (has input channels): ");
     fgets(virtualMicInputSelectedId, sizeof(virtualMicInputSelectedId), stdin);
     
-    int micId = atoi(micSelectedId);
-    int virtualMicOutputId = atoi(virtualMicOutputSelectedId);
-    int virtualMicInputId = atoi(virtualMicInputSelectedId);
-    int headphonesId = atoi(headphonesSelectedId);
+    micId = atoi(micSelectedId);
+    virtualMicOutputId = atoi(virtualMicOutputSelectedId);
+    virtualMicInputId = atoi(virtualMicInputSelectedId);
+    headphonesId = atoi(headphonesSelectedId);
+    saveDeviceIndices(micId, headphonesId, virtualMicOutputId, virtualMicInputId);
+    searchDevices:
     micName = rtaudio_get_device_info(realDeviceAudio, micId).name;
     vacOutputName = rtaudio_get_device_info(realDeviceAudio, virtualMicOutputId).name;
     vacInputName = rtaudio_get_device_info(realDeviceAudio, virtualMicInputId).name;
