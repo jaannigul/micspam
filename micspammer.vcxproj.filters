@@ -106,5 +106,6 @@
     <None Include=".gitattributes" />
     <None Include="listDevices.ps1" />
     <None Include="readme.md" />
+    <None Include="installModule.ps1" />
   </ItemGroup>
 </Project>
