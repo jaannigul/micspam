@@ -342,7 +342,9 @@ struct HashmapItem* parse_line(char* line, enum ConfigErrors* err) {
 * Internal function for freeing all hashmap elements. Called when hashmap_free is used.
 */
 void cfg_internal_free(struct HashmapItem* item) {
-	free_multiple(item->key, item->value->value, item->value, item);
+	free(item->value->value);
+	free(item->value);
+	free(item->key);
 }
 
 
@@ -394,6 +396,7 @@ struct Config* cfg_parse(char* filename, enum ConfigErrors* err) {
 
 		hashmap_set(map, item);
 
+		free(item); // this will get copied over into the hashmap, so this mem region is no longer needed
 		free(line);
 		linenr++;
 	}
@@ -501,10 +504,16 @@ enum ConfigErrors cfg_set_int(struct Config* cfg, char* key, int value) {
 			return local_err;
 		}
 
+		char* key_copy = malloc(strlen(key) + 1);
+		if (!key_copy) {
+			return CONFIG_MEMORY_ERROR;
+		}
+		strncpy_s(key_copy, strlen(key) + 1, key, strlen(key));
+
 		*(int*)found->value->value = value;
 		found->value->type = INT;
 
-		found->key = key;
+		found->key = key_copy;
 
 		hashmap_set(cfg->key_to_value, found);
 	}
@@ -525,10 +534,16 @@ enum ConfigErrors cfg_set_float(struct Config* cfg, char* key, float value) {
 			return local_err;
 		}
 
+		char* key_copy = malloc(strlen(key) + 1);
+		if (!key_copy) {
+			return CONFIG_MEMORY_ERROR;
+		}
+		strncpy_s(key_copy, strlen(key) + 1, key, strlen(key));
+
 		*(float*)found->value->value = value;
 		found->value->type = FLOAT;
 
-		found->key = key;
+		found->key = key_copy;
 
 		hashmap_set(cfg->key_to_value, found);
 	}
@@ -558,7 +573,13 @@ enum ConfigErrors cfg_set_str(struct Config* cfg, char* key, char* value) {
 		strncpy_s(found->value->value, strlen(value) + 1, value, strlen(value));
 		found->value->type = STR;
 
-		found->key = key;
+
+		char* key_copy = malloc(strlen(key) + 1);
+		if (!key_copy) {
+			return CONFIG_MEMORY_ERROR;
+		}
+		strncpy_s(key_copy, strlen(key) + 1, key, strlen(key));
+		found->key = key_copy;
 
 		hashmap_set(cfg->key_to_value, found);
 	}
