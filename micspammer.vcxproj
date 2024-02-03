@@ -186,6 +186,7 @@
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
     <None Include="getDeviceIDByName.ps1" />
+    <None Include="installModule.ps1" />
     <None Include="listDevices.ps1" />
     <None Include="readme.md" />
     <None Include="switchdevice.ps1" />
