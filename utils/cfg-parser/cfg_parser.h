@@ -12,7 +12,8 @@ enum ConfigErrors {
 	PARSER_KEY_IS_EMPTY_CHAR,
 	PARSER_EXPECTED_EQUALS_CHAR,
 	CONFIG_KEY_NOT_FOUND,
-	CONFIG_INCORRECT_VALUE_TYPE_FOR_GET
+	CONFIG_MEMORY_ERROR,
+	CONFIG_INCORRECT_VALUE_TYPE
 };
 
 struct Config;
@@ -32,10 +33,10 @@ struct Config* cfg_parse(char* filename, OUT enum ConfigErrors* err);
 void cfg_close(struct Config* config);
 
 /*
-* The following functions get a specific value from the config. 
+* The following functions get a specific value from the config.
 * If the key is not present in the config, err* is set.
 * If the parsed value type and the value user is asking doesn't match, the err* is set.
-* 
+*
 * @param cfg Pointer to the parsed configuration
 * @param key Determines which value we need to get from the config
 * @param err Optional error parameter for the two mentioned errors.
@@ -43,3 +44,16 @@ void cfg_close(struct Config* config);
 int cfg_get_int(struct Config* cfg, char* key, OUT enum ConfigErrors* err);
 float cfg_get_float(struct Config* cfg, char* key, OUT enum ConfigErrors* err);
 char* cfg_get_str(struct Config* cfg, char* key, OUT enum ConfigErrors* err);
+
+/*
+* The following functions sets a specific value for a key in the config
+* If the key is not present in the config, a brand new key to value mapping is created
+* If the key exists but the type is incorrect, err* is set.
+*
+* @param cfg Pointer to the parsed configuration
+* @param key Determines which value we need to get from the config
+* @param err Optional error parameter for the two mentioned errors.
+*/
+enum ConfigErrors cfg_set_int(struct Config* cfg, char* key, int value);
+enum ConfigErrors cfg_set_float(struct Config* cfg, char* key, float value);
+enum ConfigErrors cfg_set_str(struct Config* cfg, char* key, char* value);

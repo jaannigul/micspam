@@ -53,7 +53,7 @@ void free_multiple(void* arg1, ...)
 	va_end(args);
 }
 
-/* 
+/*
  * Returns a malloced char* that contains the characters of one line in the file.
  * @param file Pointer to the opened file stream
  * @param err Optional pointer for storing error codes
@@ -64,14 +64,14 @@ char* read_line(FILE* file, enum ConfigErrors* err) {
 	int line_start_pos = ftell(file);
 	char* line = malloc(curr_line_len);
 	if (!line) {
-		if(err) *err = PARSER_MEMORY_ERROR;
+		if (err) *err = PARSER_MEMORY_ERROR;
 		return NULL;
 	}
 
 	while (fgets(line, curr_line_len, file) != NULL) {
 		int num_chars_read = strlen(line);
 
-		if (num_chars_read < curr_line_len-1)
+		if (num_chars_read < curr_line_len - 1)
 			break;
 
 		if (num_chars_read == curr_line_len - 1 && line[curr_line_len - 1] == '\n')
@@ -109,7 +109,7 @@ bool is_comma_valid(char* str) {
 		return false;
 
 	char* comma_loc = (char*)((uintptr_t)strchr(str, (int)'.') | (uintptr_t)strchr(str, (int)','));
-	return comma_loc-1 > str && comma_loc + 1 <= str+len && isdigit(*(comma_loc - 1)) && isdigit(*(comma_loc + 1));
+	return comma_loc - 1 > str && comma_loc + 1 <= str + len && isdigit(*(comma_loc - 1)) && isdigit(*(comma_loc + 1));
 }
 
 /*
@@ -130,7 +130,7 @@ bool is_number_sign_valid(char* str) {
 		return false;
 
 	char* sign_loc = (uintptr_t)strchr(str, (int)'+') | (uintptr_t)strchr(str, (int)'-');
-	return sign_loc <= str+len && isdigit(*(sign_loc + 1));
+	return sign_loc <= str + len && isdigit(*(sign_loc + 1));
 }
 
 bool strcontains(char* str, char letter) {
@@ -148,7 +148,7 @@ bool strcontains(char* str, char letter) {
 * @return The type of the value which seemed to fit it the best
 */
 enum ValueType determine_value_type(char* value) {
-	int max_search_len = strlen(value)-1;
+	int max_search_len = strlen(value) - 1;
 	// find first nonspace char from left
 	while (max_search_len >= 0) {
 		if (!isspace(value[max_search_len]))
@@ -184,7 +184,7 @@ enum ValueType determine_value_type(char* value) {
 		if (is_number_sign_valid(first_nonwhitespace_char)) {
 			if (is_comma_valid(first_nonwhitespace_char))
 				type = FLOAT;
-			else if(commas_or_points == 0)
+			else if (commas_or_points == 0)
 				type = INT;
 		}
 	}
@@ -198,7 +198,7 @@ enum ValueType determine_value_type(char* value) {
 * @return New malloced string with no leading or trailing whitespaces.
 */
 char* lrtrim(char* str) {
-	int l = 0, r = strlen(str)-1;
+	int l = 0, r = strlen(str) - 1;
 	while (isspace(str[l]) && l <= r)
 		l++;
 
@@ -210,9 +210,42 @@ char* lrtrim(char* str) {
 	if (!new_str)
 		return NULL;
 
-	strncpy_s(new_str, dest_size + 1, str, dest_size); 
+	strncpy_s(new_str, dest_size + 1, str, dest_size);
 
 	return new_str;
+}
+
+struct HashmapItem* allocate_hashmap_item(int value_size_bytes, enum ConfigError* err) {
+	struct HashmapItem* item = malloc(sizeof(struct HashmapItem));
+	if (!item) {
+		if (err) *err = CONFIG_MEMORY_ERROR;
+		return NULL;
+	}
+
+	struct Value* newValue = malloc(sizeof(struct HashmapItem));
+	if (!newValue) {
+		if (err) *err = CONFIG_MEMORY_ERROR;
+
+		free(item);
+		return NULL;
+	}
+
+	int* valueStorage = malloc(value_size_bytes);
+	if (!valueStorage) {
+		if (err) *err = CONFIG_MEMORY_ERROR;
+
+		free(item);
+		free(newValue);
+		return NULL;
+	}
+
+	return item;
+}
+
+void free_hashmap_item(struct HashmapItem* item) {
+	free(item->value->value);
+	free(item->value);
+	free(item);
 }
 
 /*
@@ -224,11 +257,11 @@ char* lrtrim(char* str) {
 struct HashmapItem* parse_line(char* line, enum ConfigErrors* err) {
 	char* separator_pos = strchr(line, (int)'=');
 	if (separator_pos == NULL) {
-		if(err) *err = PARSER_EXPECTED_EQUALS_CHAR;
+		if (err) *err = PARSER_EXPECTED_EQUALS_CHAR;
 		return NULL;
 	}
 	if (separator_pos == line) {
-		if(err) *err = PARSER_KEY_IS_EMPTY_CHAR;
+		if (err) *err = PARSER_KEY_IS_EMPTY_CHAR;
 		return NULL;
 	}
 
@@ -237,6 +270,11 @@ struct HashmapItem* parse_line(char* line, enum ConfigErrors* err) {
 	char* key_trimmed = lrtrim(line);
 	*separator_pos = '=';
 
+	if (!key_trimmed) {
+		if (err) *err = PARSER_MEMORY_ERROR;
+		return NULL;
+	}
+
 	if (strlen(key_trimmed) == 0) {
 		free(key_trimmed);
 		if (err) *err = PARSER_KEY_IS_EMPTY_CHAR;
@@ -244,13 +282,16 @@ struct HashmapItem* parse_line(char* line, enum ConfigErrors* err) {
 	}
 
 	char* str_value = separator_pos + 1;
-	if (!key_trimmed) {
-		if(err) *err = PARSER_MEMORY_ERROR;
+	// malloc memory based on the type deferred from str
+	enum ValueType value_type = determine_value_type(str_value);
+	enum ConfigErrors local_err = NO_ERROR;
+	struct HashmapItem* hashmapItem = allocate_hashmap_item(0, &local_err);
+	if (local_err != NO_ERROR) {
+		if (err) *err = local_err;
+		free(key_trimmed);
 		return NULL;
 	}
 
-	// malloc memory based on the type deferred from str
-	enum ValueType value_type = determine_value_type(str_value);
 	void* value = NULL;
 	switch (value_type) {
 	case INT:
@@ -271,7 +312,7 @@ struct HashmapItem* parse_line(char* line, enum ConfigErrors* err) {
 
 		value = malloc(len * sizeof(char) + 1);
 		if (value) {
-			strncpy_s(value, len+1, str_value, len);
+			strncpy_s(value, len + 1, str_value, len);
 			((char*)value)[len] = '\0';
 		}
 
@@ -280,31 +321,20 @@ struct HashmapItem* parse_line(char* line, enum ConfigErrors* err) {
 
 	if (!value) {
 		free(key_trimmed);
-		if(err) *err = PARSER_MEMORY_ERROR;
+		free_hashmap_item(hashmapItem);
+
+		if (err) *err = PARSER_MEMORY_ERROR;
 		return NULL;
 	}
 
-	struct HashmapItem* item = malloc(sizeof(struct HashmapItem));
-	if (!item) {
-		free_multiple(value, key_trimmed);
-		if(err) *err = PARSER_MEMORY_ERROR;
-		return NULL;
-	}
 
-	struct Value* hashmapItemValue = malloc(sizeof(struct Value));
-	if (!hashmapItemValue) {
-		free_multiple(value, key_trimmed, item); // i think i understand now why unique_ptr or shared_ptr was invented...
-		if(err) *err = PARSER_MEMORY_ERROR;
-		return NULL;
-	}
+	hashmapItem->value->type = value_type;
+	hashmapItem->value->value = value;
 
-	hashmapItemValue->type = value_type;
-	hashmapItemValue->value = value;
+	hashmapItem->key = key_trimmed;
+	hashmapItem->value = value;
 
-	item->key = key_trimmed;
-	item->value = hashmapItemValue;
-
-	return item;
+	return hashmapItem;
 }
 
 /*
@@ -318,7 +348,7 @@ void cfg_internal_free(struct HashmapItem* item) {
 struct Config* cfg_parse(char* filename, enum ConfigErrors* err) {
 	struct hashmap* map = hashmap_new(sizeof(struct HashmapItem), 0, SEED0, SEED1, hashmap_user_hash, hashmap_compare_func, cfg_internal_free, NULL);
 	if (!map) {
-		if(err) *err = PARSER_CONFIG_INIT_ERROR;
+		if (err) *err = PARSER_CONFIG_INIT_ERROR;
 		return NULL;
 	}
 
@@ -367,6 +397,10 @@ struct Config* cfg_parse(char* filename, enum ConfigErrors* err) {
 	return config;
 }
 
+enum ConfigError cfg_save(struct Config* cfg, char* filename) {
+	// TODO: implemented later
+}
+
 void cfg_close(struct Config* config) {
 	if (!config) return;
 
@@ -383,7 +417,7 @@ int cfg_get_int(struct Config* cfg, char* key, enum ConfigErrors* err) {
 	}
 
 	if (found->value->type != INT) {
-		if (err) *err = CONFIG_INCORRECT_VALUE_TYPE_FOR_GET;
+		if (err) *err = CONFIG_INCORRECT_VALUE_TYPE;
 		return 0;
 	}
 
@@ -399,7 +433,7 @@ float cfg_get_float(struct Config* cfg, char* key, OUT enum ConfigErrors* err) {
 	}
 
 	if (found->value->type != INT) {
-		if (err) *err = CONFIG_INCORRECT_VALUE_TYPE_FOR_GET;
+		if (err) *err = CONFIG_INCORRECT_VALUE_TYPE;
 		return 0;
 	}
 
@@ -414,9 +448,88 @@ char* cfg_get_str(struct Config* cfg, char* key, OUT enum ConfigErrors* err) {
 	}
 
 	if (found->value->type != INT) {
-		if (err) *err = CONFIG_INCORRECT_VALUE_TYPE_FOR_GET;
+		if (err) *err = CONFIG_INCORRECT_VALUE_TYPE;
 		return 0;
 	}
 
 	return (char*)found->value->value;
+}
+
+enum ConfigErrors cfg_set_int(struct Config* cfg, char* key, int value) {
+	struct HashmapItem searchItem = { .key = key };
+	struct HashmapItem* found = hashmap_get(cfg->key_to_value, &searchItem);
+	if (found) {
+		if (found->value->type != INT)
+			return CONFIG_INCORRECT_VALUE_TYPE;
+
+		*(int*)found->value->value = value;
+	}
+	else {
+		enum ConfigErrors local_err = NO_ERROR;
+		found = allocate_hashmap_item(sizeof(int), &local_err);
+		if (local_err != NO_ERROR) {
+			return local_err;
+		}
+
+		*(int*)found->value->value = value;
+		found->value->type = INT;
+
+		found->key = key;
+
+		hashmap_set(cfg->key_to_value, found);
+	}
+}
+enum ConfigErrors cfg_set_float(struct Config* cfg, char* key, float value) {
+	struct HashmapItem searchItem = { .key = key };
+	struct HashmapItem* found = hashmap_get(cfg->key_to_value, &searchItem);
+	if (found) {
+		if (found->value->type != FLOAT)
+			return CONFIG_INCORRECT_VALUE_TYPE;
+
+		*(float*)found->value->value = value;
+	}
+	else {
+		enum ConfigErrors local_err = NO_ERROR;
+		found = allocate_hashmap_item(sizeof(int), &local_err);
+		if (local_err != NO_ERROR) {
+			return local_err;
+		}
+
+		*(float*)found->value->value = value;
+		found->value->type = FLOAT;
+
+		found->key = key;
+
+		hashmap_set(cfg->key_to_value, found);
+	}
+}
+enum ConfigErrors cfg_set_str(struct Config* cfg, char* key, char* value) {
+	struct HashmapItem searchItem = { .key = key };
+	struct HashmapItem* found = hashmap_get(cfg->key_to_value, &searchItem);
+	if (found) {
+		if (found->value->type != STR)
+			return CONFIG_INCORRECT_VALUE_TYPE;
+
+		char* new_mem = realloc(found->value->value, strlen(value) + 1);
+		if (!new_mem)
+			return CONFIG_MEMORY_ERROR;
+
+		strncpy_s(new_mem, strlen(value) + 1, value, strlen(value) + 1);
+
+		(char*)found->value->value = new_mem;
+	}
+	else {
+		enum ConfigErrors local_err = NO_ERROR;
+		found = allocate_hashmap_item(strlen(value) + 1, &local_err);
+		if (local_err != NO_ERROR) {
+			return local_err;
+		}
+
+		strncpy_s(found->value->value, strlen(value + 1), value, strlen(value) + 1);
+		found->value->type = STR;
+
+		found->key = key;
+
+		hashmap_set(cfg->key_to_value, found);
+	}
 }
