@@ -57,12 +57,12 @@ void free_multiple(void* arg1, ...)
  * Returns a malloced char* that contains the characters of one line in the file.
  * @param file Pointer to the opened file stream
  * @param err Optional pointer for storing error codes
- * @return Returns a malloced char* with all characters that were read on the single line, including the newline char
+ * @return Returns a malloced char* with all characters that were read on the single line, including the newline char. If no characters were read, then the 0th char will be a null terminator
 */
 char* read_line(FILE* file, enum ConfigErrors* err) {
 	int curr_line_len = 16;
 	int line_start_pos = ftell(file);
-	char* line = malloc(curr_line_len);
+	char* line = calloc(curr_line_len, sizeof(char));
 	if (!line) {
 		if (err) *err = PARSER_MEMORY_ERROR;
 		return NULL;
@@ -239,6 +239,9 @@ struct HashmapItem* allocate_hashmap_item(int value_size_bytes, enum ConfigError
 		return NULL;
 	}
 
+	item->value = newValue;
+	item->value->value = valueStorage;
+
 	return item;
 }
 
@@ -330,9 +333,7 @@ struct HashmapItem* parse_line(char* line, enum ConfigErrors* err) {
 
 	hashmapItem->value->type = value_type;
 	hashmapItem->value->value = value;
-
 	hashmapItem->key = key_trimmed;
-	hashmapItem->value = value;
 
 	return hashmapItem;
 }
@@ -376,9 +377,12 @@ struct Config* cfg_parse(char* filename, enum ConfigErrors* err) {
 		if (local_err != NO_ERROR) {
 			if (err) *err = local_err;
 
-			free_multiple(map, line, config);
+			free_multiple(map, config);
 			return NULL;
 		}
+
+		if (line[0] == '\0')
+			break; // eof
 
 		struct HashmapItem* item = parse_line(line, &local_err);
 		if (!item) {
@@ -398,14 +402,39 @@ struct Config* cfg_parse(char* filename, enum ConfigErrors* err) {
 }
 
 enum ConfigError cfg_save(struct Config* cfg, char* filename) {
-	// TODO: implemented later
+	if (!cfg) return NO_ERROR;
+
+	FILE* file;
+	errno_t ferr = fopen_s(&file, filename, "w");
+	if (!file)
+		return PARSER_FAILED_TO_OPEN_FILE;
+
+	const struct HashmapItem* item = NULL;
+	size_t i = 0;
+	while (hashmap_iter(cfg->key_to_value, &i, &item)) {
+		const char* format = "";
+		switch (item->value->type) {
+		case INT:
+			fprintf(file, "%s=%d\n", item->key, *(int*)item->value->value);
+			break;
+		case FLOAT:
+			fprintf(file, "%s=%f\n", item->key, *(float*)item->value->value);
+			break;
+		case STR:
+			fprintf(file, "%s=%s\n", item->key, (char*)item->value->value);
+			break;
+		}
+	}
+
+	fclose(file);
 }
 
-void cfg_close(struct Config* config) {
+void cfg_close(struct Config** config) {
 	if (!config) return;
 
-	hashmap_free(config->key_to_value);
-	free(config);
+	hashmap_free((*config)->key_to_value);
+	free(*config);
+	*config = NULL;
 }
 
 int cfg_get_int(struct Config* cfg, char* key, enum ConfigErrors* err) {
@@ -439,7 +468,8 @@ float cfg_get_float(struct Config* cfg, char* key, OUT enum ConfigErrors* err) {
 
 	return *(float*)found->value->value;
 }
-char* cfg_get_str(struct Config* cfg, char* key, OUT enum ConfigErrors* err) {
+
+const char* cfg_get_str(struct Config* cfg, char* key, OUT enum ConfigErrors* err) {
 	struct HashmapItem searchItem = { .key = key };
 	const struct HashmapItem* found = hashmap_get(cfg->key_to_value, &searchItem);
 	if (!found) {
@@ -514,7 +544,7 @@ enum ConfigErrors cfg_set_str(struct Config* cfg, char* key, char* value) {
 		if (!new_mem)
 			return CONFIG_MEMORY_ERROR;
 
-		strncpy_s(new_mem, strlen(value) + 1, value, strlen(value) + 1);
+		strncpy_s(new_mem, strlen(value) + 1, value, strlen(value));
 
 		(char*)found->value->value = new_mem;
 	}
@@ -525,7 +555,7 @@ enum ConfigErrors cfg_set_str(struct Config* cfg, char* key, char* value) {
 			return local_err;
 		}
 
-		strncpy_s(found->value->value, strlen(value + 1), value, strlen(value) + 1);
+		strncpy_s(found->value->value, strlen(value) + 1, value, strlen(value));
 		found->value->type = STR;
 
 		found->key = key;

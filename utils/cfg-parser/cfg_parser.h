@@ -27,10 +27,18 @@ struct Config;
 struct Config* cfg_parse(char* filename, OUT enum ConfigErrors* err);
 
 /*
+* Saves the config into a file with the simple 'K=V' format
+* @param cfg Pointer to a loaded config
+* @param filename Full/relative path to the file
+* @return NO_ERROR if the save was successful, otherwise an error code
+*/
+enum ConfigError cfg_save(struct Config* cfg, char* filename);
+
+/*
 * Closes a config and frees any memory taken up by it.
 * @param config Pointer to the configuration struct.
 */
-void cfg_close(struct Config* config);
+void cfg_close(struct Config** config);
 
 /*
 * The following functions get a specific value from the config.
@@ -43,7 +51,7 @@ void cfg_close(struct Config* config);
 */
 int cfg_get_int(struct Config* cfg, char* key, OUT enum ConfigErrors* err);
 float cfg_get_float(struct Config* cfg, char* key, OUT enum ConfigErrors* err);
-char* cfg_get_str(struct Config* cfg, char* key, OUT enum ConfigErrors* err);
+const char* cfg_get_str(struct Config* cfg, char* key, OUT enum ConfigErrors* err);
 
 /*
 * The following functions sets a specific value for a key in the config
