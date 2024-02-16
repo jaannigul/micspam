@@ -163,7 +163,7 @@ void printFileList() {
 }
 
 int main() {
-
+#ifdef ENABLE_GUI
     DWORD err = PrepareForUIAccess();
     if (err != ERROR_SUCCESS) {
         printf("Error setting up UI access. This is required for overlaying things over an exclusive fullscreen game. GUI popups for the micspammer are disabled.\n");
@@ -171,6 +171,7 @@ int main() {
     }
     else
         guiTestEntryPoint();
+#endif
 
     realDeviceAudio = rtaudio_create(RTAUDIO_API_WINDOWS_WASAPI);
     if (!realDeviceAudio) {

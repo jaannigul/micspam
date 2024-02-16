@@ -17,42 +17,6 @@ volatile _Bool cancellationRequest = FALSE;
 
 // copied from https://github.com/libsndfile/libsamplerate/blob/master/examples/varispeed-play.c
 
-typedef struct
-{
-	int			magic;
-	SNDFILE* sndfile;
-	SF_INFO 	sfinfo;
-
-	float		buffer[BUFFER_FRAMES];
-} SNDFILE_CB_DATA;
-
-#define ARRAY_LEN(x)	((int) (sizeof (x) / sizeof ((x) [0])))
-
-// what the fuck does this do
-static long
-src_input_callback(void* cb_data, float** audio)
-{
-	SNDFILE_CB_DATA* data = (SNDFILE_CB_DATA*)cb_data;
-	const int input_frames = ARRAY_LEN(data->buffer) / data->sfinfo.channels;
-	int		read_frames;
-
-	for (read_frames = 0; read_frames < input_frames; )
-	{
-		sf_count_t position;
-
-		read_frames += (int)sf_readf_float(data->sndfile, data->buffer + read_frames * data->sfinfo.channels, input_frames - read_frames);
-
-		position = sf_seek(data->sndfile, 0, SEEK_CUR);
-
-		if (position < 0 || position == data->sfinfo.frames)
-			sf_seek(data->sndfile, 0, SEEK_SET);
-	};
-
-	*audio = &(data->buffer[0]);
-
-	return input_frames;
-}
-
 BOOL directoryExists(const char* path)
 {
 	DWORD dwAttrib = GetFileAttributes(path);
@@ -186,6 +150,7 @@ void playAudioThread(const char* filePath) {
 
 		int monoFrames = min(conversionData.output_frames_gen, BUFFER_FRAMES);
 		float* framesToSendSoon = calloc(monoFrames, sizeof(float));
+		if (!framesToSendSoon) continue; // TODO: log this in the future?
 
 		// simplify all channels down to one
 		for (int i = 0; i < monoFrames; i++)

@@ -16,7 +16,7 @@ int realMicAndHeadphonesCallback(float* out, float* in, unsigned int nFrames,
 
     float zero = 0.0f;
     float* forwardData = calloc(BUFFER_FRAMES, sizeof(float));
-    float* playbackDataHeadphones = StsQueue.pop(headphonesPlaybackQueue);
+   float* playbackDataHeadphones = StsQueue.pop(headphonesPlaybackQueue);
     if (forwardData) {
         memcpy(forwardData, in, BUFFER_FRAMES*sizeof(float));
         StsQueue.push(virtualMicPlaybackQueue, forwardData, REAL_MIC_DATA_PRIORITY, TRUE);
