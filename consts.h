@@ -1,6 +1,6 @@
 #pragma once
 
-//#define ENABLE_GUI
+#define ENABLE_GUI
 #define BUFFER_FRAMES 256
 
 #define MAX_CHAR_BUF_LEN 2*MAX_PATH
